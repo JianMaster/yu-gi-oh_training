@@ -1,7 +1,7 @@
 public enum CardType
 {
     Monster,
-    Magic,
+    Spell,
     Trap
 }
 
@@ -13,4 +13,14 @@ public enum Phase
     Battle,
     Main2,
     End
+}
+
+public enum CommandType {
+    NormalSummon,
+    SpecialSummon,
+    MonsterSet,
+    MonsetFilp,
+    Attack,
+    SpellTrapSet,
+    SpellTrapActivate
 }

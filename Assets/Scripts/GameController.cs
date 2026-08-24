@@ -1,13 +1,23 @@
+using System;
+using UnityEngine;
+
 public class GameController {
     Phase _curPhase;
-    Player _player;
-    Player _enemy;
-    public GameController() {
+    Player _player1;
+    Player _player2;
+
+    int _turn = 1;
+    int _first = 0; // 0为player1先手，1为后手
+    Player TurnOwner => _turn % 2 + _first == 1 ? _player1 : _player2;
+    Player Opponent => _turn % 2 + _first == 0 ? _player1 : _player2;
+    
+    public GameController(int first) {
+        _first = first;
         _curPhase = Phase.Draw;
-        _player = new();
-        _enemy = new();
+        _player1 = new();
+        _player2 = new();
     }
-    public void Update(bool next) {
+    public void Update(InputData a) {
         // switch (_curPhase) {
         //     case Phase.Draw:
         //         break;
@@ -23,12 +33,7 @@ public class GameController {
         //         break;
         // }
 
-        if (next) {
-            _curPhase++;
-            if (_curPhase > Phase.End) {
-                _curPhase = Phase.Draw;
-            }
-        }
+        
     }
 
 
