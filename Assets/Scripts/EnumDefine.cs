@@ -24,3 +24,17 @@ public enum CommandType {
     SpellTrapSet,
     SpellTrapActivate
 }
+
+public enum EffectType {
+    NormalSummon,
+    SpecialSummon,
+}
+
+public enum MonsterAttribute {
+    Light,
+    Dark
+}
+public enum MonsterType {
+    Warrior,
+    Dragon,
+}
