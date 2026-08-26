@@ -7,7 +7,7 @@ public class Main : MonoBehaviour {
     InputData _inputData = new();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
-        _game = new(0);
+        _game = new(true);
         _game.GameStart();
     }
 
@@ -15,6 +15,7 @@ public class Main : MonoBehaviour {
     void Update() {
         _inputManager.GetInput(ref _inputData);
         _game.Update(_inputData);
+        
     }
 
     void LateUpdate() {

@@ -1,18 +1,21 @@
+using UnityEngine;
+
 public class GameState {
     Player _player1;
     Player _player2;
-    int _first = 0; // 0为player1先手，1为后手
+    bool _first; // true为player1先手，false为后手
 
     public Phase CurPhase { get; set; }
     public int Turn { get; set; } = 1;
-    public Player TurnOwner => Turn % 2 + _first == 1 ? _player1 : _player2;
+    public Player TurnOwner => Turn % 2 == 1 && _first ? _player1 : _player2;
     public Player Opponent => TurnOwner == _player1 ? _player2 : _player1;
 
-    public GameState(int first) {
+    public GameState(bool first) {
         CurPhase = Phase.Draw;
-        
-        _player1 = new();
-        _player2 = new();
+
+        _first = first;
+        _player1 = new(1);
+        _player2 = new(2);
     }
 
     public void NextPhase() {
@@ -23,5 +26,7 @@ public class GameState {
         else {
             CurPhase++;
         }
+
+        Debug.Log($"当前回合{Turn}, 当前阶段{CurPhase}");
     }
 }
