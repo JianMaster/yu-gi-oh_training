@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player {
-    public int ID { get; set; }
-    public int LifePoint { get; set; } = GameDefines.LIFEPOINT;
-    public List<CardBase> Hand { get; set; } = new();
-    public Stack<CardBase> Deck { get; set; } = new();
-    // public List<Card> ExtraDeck { get; set; }
-    public List<CardBase> GY { get; set; } = new();
-    public List<CardBase> MonsterZone { get; set; } = new();
-    public List<CardBase> SpellTrapZone { get; set; } = new();
+    public int ID { get; private set; }
+    public int LifePoint { get; private set; } = GameDefines.LIFEPOINT;
+    public List<CardBase> Hand { get; private set; } = new();
+    public Stack<CardBase> Deck { get; private set; } = new();
+    // public List<Card> ExtraDeck { get; private set; }
+    public List<CardBase> GY { get; private set; } = new();
+    public CardBase[] MonsterZone { get; private set; } = new CardBase[5];
+    public CardBase[] SpellTrapZone { get; private set; } = new CardBase[5];
     int _normalSummonCount = GameDefines.SUMMON_NORMAL_COUNT;
 
     public Player(int id) {
@@ -35,5 +35,19 @@ public class Player {
         if (Hand.Count > GameDefines.MAX_HAND_COUNT) {
             Debug.Log($"当前手牌{Hand.Count}，执行弃牌处理");
         }
+    }
+
+    public List<int> GetAvailableMonsterZone() {
+        List<int> zoneIds = new();
+        for(int i = 0; i < MonsterZone.Length; ++i) {
+            if(MonsterZone[i] == null) {
+                zoneIds.Add(i);
+            }
+        }
+        return zoneIds;
+    }
+
+    public void NormalSummon(int handId, int zoneId) {
+        Debug.Log($"通常召唤怪兽到区域{zoneId}");
     }
 }

@@ -14,7 +14,7 @@ public class Main : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         _inputManager.GetInput(ref _inputData);
-        _game.Update(_inputData);
+        _game.ExcuteCommand(_inputData);
         
     }
 
