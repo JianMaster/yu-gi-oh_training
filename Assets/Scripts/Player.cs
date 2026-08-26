@@ -9,9 +9,9 @@ public class Player {
     public List<CardBase> GY { get; set; } = new();
     public List<CardBase> MonsterZone { get; set; } = new();
     public List<CardBase> SpellTrapZone { get; set; } = new();
+    int _normalSummonCount = GameDefines.SUMMON_NORMAL_COUNT;
 
     public Player() {
-        LifePoint = GameDefines.LIFEPOINT;
         for (int i = 0; i < GameDefines.MIN_DECK_COUNT; ++i) {
             Deck.Push(new Card_Monster());
         }

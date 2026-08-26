@@ -8,10 +8,10 @@ public enum CardType
 public enum Phase
 {
     Draw,
-    Stand,
+    // Stand,
     Main1,
-    Battle,
-    Main2,
+    // Battle,
+    // Main2,
     End
 }
 
