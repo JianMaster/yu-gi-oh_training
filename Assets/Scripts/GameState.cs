@@ -4,9 +4,6 @@ public class GameState {
     Player _player1;
     Player _player2;
     bool _first; // true为player1先手，false为后手
-    int _selectHand;
-    public int SelecetHand => _selectHand;
-    public bool IsSelectHand => _selectHand != 0;
 
     public Phase CurPhase { get; private set; }
     public int Turn { get; private set; } = 1;
@@ -21,10 +18,6 @@ public class GameState {
         _player2 = new(2);
     }
 
-    public void SetSelectHand(int id) {
-        Debug.Log($"选择手牌：{id}");
-        _selectHand = id;
-    }
 
     public void NextPhase() {
         if (CurPhase == Phase.End) {

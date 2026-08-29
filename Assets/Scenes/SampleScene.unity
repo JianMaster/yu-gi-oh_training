@@ -372,6 +372,8 @@ MonoBehaviour:
   _drawAction: {fileID: -3508836965628358708, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   _nextAction: {fileID: -6343375349453744189, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   _selectHandAction: {fileID: 5978244877202903331, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  _cancelAction: {fileID: -25905241400582670, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  _normalSummonAction: {fileID: 4747298156921077564, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
 --- !u!4 &834552272
 Transform:
   m_ObjectHideFlags: 0

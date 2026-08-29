@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameController {
@@ -16,36 +17,51 @@ public class GameController {
         _gameState.Opponent.Draw(GameDefines.START_CARD_COUNT);
     }
 
+    List<int> _monsterZone = new();
     public void ExcuteCommand(InputData command) {
-        if (_selectMode) {
-            if (command.cancel) {
-                _selectMode = false;
+        Player player = _gameState.TurnOwner;
+        if (command.cancel) {
+            ResetState(player);
+            return;
+        }
+
+        if (_gameState.CurPhase == Phase.Main1) {
+            if (_selectMode) {
+                if (command.IsSelect && _monsterZone.Contains(command.select)) {
+                    player.NormalSummon(command.select);
+                    ResetState(player);
+                }
                 return;
             }
-            
-            
+            if (command.IsSelect) {
+                player.SetSelectHand(command.select);
+            }
+
+            if (player.CanNormalSummon && command.normalSummon && player.IsSelectHand) {
+                Debug.Log("通常召唤怪兽，选择区域");
+                _monsterZone = player.GetAvailableMonsterZone();
+                _selectMode = true;
+            }
         }
 
         if (command.nextPhase) {
+            ResetState(player);
             _gameState.NextPhase();
-            Player player = _gameState.TurnOwner;
             if (_gameState.CurPhase == Phase.Draw) {
-                player.Draw(1);
+                _gameState.TurnOwner.TurnStart();
+                _gameState.TurnOwner.Draw(1);
             }
             else if (_gameState.CurPhase == Phase.End) {
                 player.CheckHandLimit();
             }
         }
 
-        if(command.selectHand != 0) {
-            _gameState.SetSelectHand(command.selectHand);
-        }
+    }
 
-        if (command.normalSummon && _gameState.IsSelectHand) {
-            Debug.Log("通常召唤怪兽，选择区域");
-            _selectMode = true;
-        }
-
+    void ResetState(Player player = null) {
+        _selectMode = false;
+        _monsterZone.Clear();
+        player?.SetSelectHand(-1);
     }
 
 

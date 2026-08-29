@@ -29,7 +29,7 @@ public class InputManager : MonoBehaviour {
         }
         if (_selectHandAction.action.WasPressedThisFrame()) {
             KeyControl keyControl = _selectHandAction.action.activeControl as KeyControl;
-            inputData.selectHand = keyControl.keyCode - Key.Z;
+            inputData.select = keyControl.keyCode - Key.Digit1;
         }
         if (_normalSummonAction.action.WasPressedThisFrame()) {
             inputData.normalSummon = true;
@@ -45,14 +45,15 @@ public class InputManager : MonoBehaviour {
 public class InputData {
     public bool draw;
     public bool nextPhase;
-    public int selectHand;
+    public int select;
+    public bool IsSelect => select != -1;
     public bool normalSummon;
     public bool cancel;
 
     public void Reset() {
         draw = false;
         nextPhase = false;
-        selectHand = 0;
+        select = -1;
         normalSummon = false;
         cancel = false;
     }

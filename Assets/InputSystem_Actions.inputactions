@@ -1031,6 +1031,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "NormalSummon",
+                    "type": "Button",
+                    "id": "ee234c65-fc3a-407a-b4ac-d241d6c61f35",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1059,6 +1068,17 @@
                 {
                     "name": "",
                     "id": "c5ce72c1-13a7-444f-9f7f-176cdd7a0bf7",
+                    "path": "<Keyboard>/0",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectHand",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ed559602-1d4a-4992-ba5a-b380c5bc870f",
                     "path": "<Keyboard>/1",
                     "interactions": "",
                     "processors": "",
@@ -1130,6 +1150,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c5dac121-1295-4db8-aaf3-98028f5d457c",
+                    "path": "<Keyboard>/n",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "NormalSummon",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
