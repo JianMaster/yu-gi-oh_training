@@ -10,12 +10,13 @@ public class GameState {
     public Player TurnOwner => Turn % 2 == 1 && _first ? _player1 : _player2;
     public Player Opponent => TurnOwner == _player1 ? _player2 : _player1;
 
-    public GameState(bool first) {
+    public GameState(bool first, PlayerData data1, PlayerData data2) {
         CurPhase = Phase.Draw;
 
         _first = first;
-        _player1 = new(1);
-        _player2 = new(2);
+        _player1 = new(1, data1);
+        _player2 = new(2, data2);
+        Debug.Log($"当前先手玩家：{(first ? 1 : 2)}");
     }
 
 

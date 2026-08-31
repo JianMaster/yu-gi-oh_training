@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public static class GameDefines {
     public const int LIFEPOINT = 8000;
     public const int START_CARD_COUNT = 5;

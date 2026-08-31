@@ -37,4 +37,5 @@ public enum MonsterAttribute {
 public enum MonsterType {
     Warrior,
     Dragon,
+    Spellcaster
 }

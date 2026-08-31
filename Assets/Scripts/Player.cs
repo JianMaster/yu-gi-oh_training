@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Player {
+    PlayerData _data;
     public int ID { get; private set; }
     public int LifePoint { get; private set; } = GameDefines.LIFEPOINT;
     public List<CardBase> Hand { get; private set; } = new();
@@ -12,21 +13,29 @@ public class Player {
     public CardBase[] MonsterZone { get; private set; } = new CardBase[5];
     public CardBase[] SpellTrapZone { get; private set; } = new CardBase[5];
 
-    int _normalSummonCount = GameDefines.SUMMON_NORMAL_COUNT;
-    public bool CanNormalSummon => _normalSummonCount >= 0;
+    int _normalSummonCount;
+    public bool CanNormalSummon => _normalSummonCount > GameDefines.SUMMON_NORMAL_COUNT;
 
     int _selectHand;
     public bool IsSelectHand => _selectHand != -1;
 
-    public Player(int id) {
+    public Player(int id, PlayerData data) {
         ID = id;
-        for (int i = 0; i < GameDefines.MIN_DECK_COUNT; ++i) {
-            Deck.Push(new Card_Monster());
+        _data = data;
+        string[] cardIds = data.Deck.Split(' ');
+
+        foreach (var cardId in cardIds) {
+            CardBase card = CardTool.CreateInstance(cardId);
+            if (card != null)
+                Deck.Push(card);
         }
+
+        TurnStart();
     }
 
+
     public void TurnStart() {
-        _normalSummonCount = GameDefines.SUMMON_NORMAL_COUNT;
+        _normalSummonCount = 0;
     }
 
     public void Draw(int count) {
@@ -67,8 +76,8 @@ public class Player {
     }
 
     public void NormalSummon(int zoneId) {
-        Log($"通常召唤怪兽{_selectHand}到区域{zoneId}");
-        --_normalSummonCount;
+        Log($"通常召唤怪兽{Hand[_selectHand].Name}到区域{zoneId}");
+        _normalSummonCount++;
         MonsterZone[zoneId] = Hand[_selectHand];
         Hand.RemoveAt(_selectHand);
     }

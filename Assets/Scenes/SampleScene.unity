@@ -419,6 +419,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Main
   _inputManager: {fileID: 834552271}
+  player1_first: 1
+  data1: {fileID: 11400000, guid: 37ce9e09cba83104daef94c2bd2f029e, type: 2}
+  data2: {fileID: 11400000, guid: bd2ace041a305b14297eb132a224812d, type: 2}
 --- !u!4 &1811301258
 Transform:
   m_ObjectHideFlags: 0

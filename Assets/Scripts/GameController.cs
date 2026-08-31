@@ -6,8 +6,8 @@ public class GameController {
     GameState _gameState;
     bool _selectMode;
 
-    public GameController(bool first) {
-        _gameState = new(first);
+    public GameController(bool first, PlayerData data1, PlayerData data2) {
+        _gameState = new(first, data1, data2);
         _selectMode = false;
     }
 
