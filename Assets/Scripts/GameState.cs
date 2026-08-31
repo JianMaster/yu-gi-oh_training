@@ -7,7 +7,7 @@ public class GameState {
 
     public Phase CurPhase { get; private set; }
     public int Turn { get; private set; } = 1;
-    public Player TurnOwner => Turn % 2 == 1 && _first ? _player1 : _player2;
+    public Player TurnOwner => (Turn + (_first ? 0 : 1)) % 2 == 1 ? _player1 : _player2;
     public Player Opponent => TurnOwner == _player1 ? _player2 : _player1;
 
     public GameState(bool first, PlayerData data1, PlayerData data2) {

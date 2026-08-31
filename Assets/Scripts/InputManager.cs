@@ -9,17 +9,6 @@ public class InputManager : MonoBehaviour {
     [SerializeField] InputActionReference _cancelAction;
     [SerializeField] InputActionReference _normalSummonAction;
 
-    void OnEnable() {
-        _drawAction.action.Enable();
-        _nextAction.action.Enable();
-        _selectHandAction.action.Enable();
-    }
-    void OnDisable() {
-        _drawAction.action.Disable();
-        _nextAction.action.Disable();
-        _selectHandAction.action.Disable();
-    }
-
     public void GetInput(ref InputData inputData) {
         if (_drawAction.action.WasPressedThisFrame()) {
             inputData.draw = true;
@@ -45,7 +34,7 @@ public class InputManager : MonoBehaviour {
 public class InputData {
     public bool draw;
     public bool nextPhase;
-    public int select;
+    public int select = -1;
     public bool IsSelect => select != -1;
     public bool normalSummon;
     public bool cancel;

@@ -14,7 +14,7 @@ public class Player {
     public CardBase[] SpellTrapZone { get; private set; } = new CardBase[5];
 
     int _normalSummonCount;
-    public bool CanNormalSummon => _normalSummonCount > GameDefines.SUMMON_NORMAL_COUNT;
+    public bool CanNormalSummon => _normalSummonCount >= GameDefines.SUMMON_NORMAL_COUNT;
 
     int _selectHand;
     public bool IsSelectHand => _selectHand != -1;
@@ -35,6 +35,7 @@ public class Player {
 
 
     public void TurnStart() {
+        _selectHand = -1;
         _normalSummonCount = 0;
     }
 
