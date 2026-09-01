@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameController {
     GameState _gameState;
     bool _selectMode;
+    int _selectHand;
+    bool IsSelectHand => _selectHand != -1;
 
     public GameController(bool first, PlayerData data1, PlayerData data2) {
         _gameState = new(first, data1, data2);
@@ -28,16 +30,21 @@ public class GameController {
         if (_gameState.CurPhase == Phase.Main1) {
             if (_selectMode) {
                 if (command.IsSelect && _monsterZone.Contains(command.select)) {
-                    player.NormalSummon(command.select);
+                    player.NormalSummon(_selectHand, command.select);
                     ResetState(player);
                 }
                 return;
             }
             if (command.IsSelect) {
-                player.SetSelectHand(command.select);
+                if (command.select >= player.Hand.Count) {
+                    Debug.LogError($"player{player.ID}，手牌选择错误：{command.select}");
+                    return;
+                }
+                _selectHand = command.select;
+                Debug.Log($"player{player.ID}, 点击手牌：{_selectHand}");
             }
 
-            if (player.CanNormalSummon && command.normalSummon && player.IsSelectHand) {
+            if (player.CanNormalSummon && command.normalSummon && IsSelectHand) {
                 Debug.Log("通常召唤怪兽，选择区域");
                 _monsterZone = player.GetAvailableMonsterZone();
                 _selectMode = true;
@@ -60,8 +67,8 @@ public class GameController {
 
     void ResetState(Player player = null) {
         _selectMode = false;
+        _selectHand = -1;
         _monsterZone.Clear();
-        player?.SetSelectHand(-1);
     }
 
 

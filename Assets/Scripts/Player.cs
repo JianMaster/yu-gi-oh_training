@@ -16,8 +16,7 @@ public class Player {
     int _normalSummonCount;
     public bool CanNormalSummon => _normalSummonCount >= GameDefines.SUMMON_NORMAL_COUNT;
 
-    int _selectHand;
-    public bool IsSelectHand => _selectHand != -1;
+    
 
     public Player(int id, PlayerData data) {
         ID = id;
@@ -35,7 +34,6 @@ public class Player {
 
 
     public void TurnStart() {
-        _selectHand = -1;
         _normalSummonCount = 0;
     }
 
@@ -57,14 +55,6 @@ public class Player {
         }
     }
 
-    public void SetSelectHand(int id) {
-        if (id >= Hand.Count) {
-            return;
-        }
-        Log($"选择手牌：{id}");
-        _selectHand = id;
-    }
-
     public List<int> GetAvailableMonsterZone() {
         List<int> zoneIds = new();
         for (int i = 0; i < MonsterZone.Length; ++i) {
@@ -76,11 +66,11 @@ public class Player {
         return zoneIds;
     }
 
-    public void NormalSummon(int zoneId) {
-        Log($"通常召唤怪兽{Hand[_selectHand].Name}到区域{zoneId}");
+    public void NormalSummon(int selectHand, int zoneId) {
+        Log($"通常召唤怪兽{Hand[selectHand].Name}到区域{zoneId}");
         _normalSummonCount++;
-        MonsterZone[zoneId] = Hand[_selectHand];
-        Hand.RemoveAt(_selectHand);
+        MonsterZone[zoneId] = Hand[selectHand];
+        Hand.RemoveAt(selectHand);
     }
 
 
