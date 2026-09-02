@@ -8,6 +8,7 @@ public class InputManager : MonoBehaviour {
     [SerializeField] InputActionReference _selectHandAction;
     [SerializeField] InputActionReference _cancelAction;
     [SerializeField] InputActionReference _normalSummonAction;
+    [SerializeField] InputActionReference _attackAction;
 
     public void GetInput(ref InputData inputData) {
         if (_drawAction.action.WasPressedThisFrame()) {
@@ -26,7 +27,7 @@ public class InputManager : MonoBehaviour {
         if (_cancelAction.action.WasPressedThisFrame()) {
             inputData.cancel = true;
         }
-
+        inputData.Attack = _attackAction.action.IsPressed();
 
     }
 }
@@ -38,6 +39,7 @@ public class InputData {
     public bool IsSelect => select != -1;
     public bool normalSummon;
     public bool cancel;
+    public bool Attack;
 
     public void Reset() {
         draw = false;

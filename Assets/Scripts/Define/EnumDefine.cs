@@ -10,7 +10,7 @@ public enum Phase
     Draw,
     // Stand,
     Main1,
-    // Battle,
+    Battle,
     // Main2,
     End
 }

@@ -16,7 +16,6 @@ public class Player {
     int _normalSummonCount;
     public bool CanNormalSummon => _normalSummonCount >= GameDefines.SUMMON_NORMAL_COUNT;
 
-    
 
     public Player(int id, PlayerData data) {
         ID = id;
@@ -25,8 +24,10 @@ public class Player {
 
         foreach (var cardId in cardIds) {
             CardBase card = CardTool.CreateInstance(cardId);
-            if (card != null)
+            if (card != null) {
                 Deck.Push(card);
+                card.Belong = ID;
+            }
         }
 
         TurnStart();
@@ -47,6 +48,14 @@ public class Player {
             }
         }
         Log($"抽取{count}张，当前手牌{Hand.Count}");
+    }
+
+    public bool CheckHand(int id) {
+        if (id >= Hand.Count) {
+            Log($"手牌选择错误：{id}");
+            return false;
+        }
+        return true;
     }
 
     public void CheckHandLimit() {
@@ -71,6 +80,38 @@ public class Player {
         _normalSummonCount++;
         MonsterZone[zoneId] = Hand[selectHand];
         Hand.RemoveAt(selectHand);
+    }
+
+    public bool CheckMonsterCanAttack(int zoneId) {
+        if (MonsterZone[zoneId] == null) {
+            return false;
+        }
+        return true;
+    }
+
+    public List<int> GetAttackTarget() {
+        List<int> targets = new();
+        for (int i = 0; i < MonsterZone.Length; ++i) {
+            if (MonsterZone[i] != null) {
+                targets.Add(i);
+            }
+        }
+        // 空场
+        if (targets.Count == 0) {
+            targets.Add(GameDefines.PLAYER_ZONE);
+        }
+
+        Log("当前可攻击对象" + string.Join(" ", targets));
+
+        return targets;
+    }
+
+    public void Attack(int self, Player opponent, int target) {
+        Card_Monster selfMonster = MonsterZone[self] as Card_Monster;
+        Card_Monster opponentMonster = opponent.MonsterZone[target] as Card_Monster;
+        Log($"{selfMonster.Name}攻击 player{opponent.ID}的{opponentMonster.Name}");
+        if (selfMonster.Atk > opponentMonster.Def) {
+        }
     }
 
 

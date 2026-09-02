@@ -5,8 +5,10 @@ using UnityEngine;
 public class GameController {
     GameState _gameState;
     bool _selectMode;
-    int _selectHand;
+    int _selectHand = -1;
     bool IsSelectHand => _selectHand != -1;
+    int _selectMonster = -1;
+    bool IsSelectMonster => _selectMonster != -1;
 
     public GameController(bool first, PlayerData data1, PlayerData data2) {
         _gameState = new(first, data1, data2);
@@ -19,25 +21,34 @@ public class GameController {
         _gameState.Opponent.Draw(GameDefines.START_CARD_COUNT);
     }
 
-    List<int> _monsterZone = new();
+    List<int> _canSelect = new();
     public void ExcuteCommand(InputData command) {
         Player player = _gameState.TurnOwner;
+        Player opponent = _gameState.Opponent;
+
         if (command.cancel) {
-            ResetState(player);
+            ResetState();
             return;
+        }
+
+        if (_gameState.CurPhase == Phase.Draw) {
+            player.TurnStart();
+            if (_gameState.Turn != 1) {
+                player.Draw(GameDefines.DRAW_CARD_COUNT);
+            }
+            NextPhase(); // 抽牌结束自动下一个阶段
         }
 
         if (_gameState.CurPhase == Phase.Main1) {
             if (_selectMode) {
-                if (command.IsSelect && _monsterZone.Contains(command.select)) {
+                if (command.IsSelect && _canSelect.Contains(command.select)) {
                     player.NormalSummon(_selectHand, command.select);
-                    ResetState(player);
+                    ResetState();
                 }
                 return;
             }
             if (command.IsSelect) {
-                if (command.select >= player.Hand.Count) {
-                    Debug.LogError($"player{player.ID}，手牌选择错误：{command.select}");
+                if (player.CheckHand(command.select)) {
                     return;
                 }
                 _selectHand = command.select;
@@ -46,29 +57,53 @@ public class GameController {
 
             if (player.CanNormalSummon && command.normalSummon && IsSelectHand) {
                 Debug.Log("通常召唤怪兽，选择区域");
-                _monsterZone = player.GetAvailableMonsterZone();
+                _canSelect = player.GetAvailableMonsterZone();
                 _selectMode = true;
             }
         }
 
-        if (command.nextPhase) {
-            ResetState(player);
-            _gameState.NextPhase();
-            if (_gameState.CurPhase == Phase.Draw) {
-                _gameState.TurnOwner.TurnStart();
-                _gameState.TurnOwner.Draw(1);
+        // 战斗阶段
+        if (_gameState.CurPhase == Phase.Battle) {
+            if (_selectMode) {
+                if (command.IsSelect && _canSelect.Contains(command.select)) {
+                    player.Attack(_selectHand, opponent, command.select);
+                    ResetState();
+                }
+                return;
             }
-            else if (_gameState.CurPhase == Phase.End) {
-                player.CheckHandLimit();
+            if (command.Attack && command.IsSelect) {
+                if (!player.CheckMonsterCanAttack(command.select)) {
+                    Debug.Log("没有可攻击的怪兽");
+                    return;
+                }
+                Debug.Log("准备攻击");
+                _canSelect = opponent.GetAttackTarget();
+                _selectMode = true;
+                _selectMonster = command.select;
             }
         }
 
+        if (_gameState.CurPhase == Phase.End) {
+            player.CheckHandLimit();
+            NextPhase();
+        }
+
+        if (command.nextPhase) {
+            NextPhase();
+            return;
+        }
     }
 
-    void ResetState(Player player = null) {
+    void NextPhase() {
+        ResetState();
+        _gameState.NextPhase();
+    }
+
+    void ResetState() {
         _selectMode = false;
         _selectHand = -1;
-        _monsterZone.Clear();
+        _selectMonster = -1;
+        _canSelect.Clear();
     }
 
 
