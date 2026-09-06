@@ -66,7 +66,7 @@ public class GameController {
         if (_gameState.CurPhase == Phase.Battle) {
             if (_selectMode) {
                 if (command.IsSelect && _canSelect.Contains(command.select)) {
-                    player.Attack(_selectHand, opponent, command.select);
+                    player.Attack(_selectMonster, opponent, command.select);
                     ResetState();
                 }
                 return;

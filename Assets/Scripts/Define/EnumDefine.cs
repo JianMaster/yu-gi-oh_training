@@ -5,6 +5,19 @@ public enum CardType
     Trap
 }
 
+public enum CardFace {
+    FaceUp,
+    FaceDown
+}
+
+public enum ZoneType {
+    Deck,
+    Hand,
+    GY,
+    Monster,
+    SpellTrap
+}
+
 public enum Phase
 {
     Draw,
@@ -38,4 +51,9 @@ public enum MonsterType {
     Warrior,
     Dragon,
     Spellcaster
+}
+
+public enum MonterPosition {
+    Attack,
+    Defense
 }
