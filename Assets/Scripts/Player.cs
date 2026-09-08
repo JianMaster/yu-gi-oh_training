@@ -15,7 +15,7 @@ public class Player {
     public List<CardBase> SpellTrapZone { get; private set; } = new() { null, null, null, null, null };
 
     int _normalSummonCount;
-    public bool CanNormalSummon => _normalSummonCount >= GameDefines.SUMMON_NORMAL_COUNT;
+    public bool CanNormalSummon => _normalSummonCount > 0;
 
 
     public Player(int id, PlayerData data) {
@@ -42,14 +42,18 @@ public class Player {
 
 
     public void TurnStart() {
-        _normalSummonCount = 0;
+        _normalSummonCount = GameDefines.SUMMON_NORMAL_COUNT;
+        Hand.ForEach(card => card.TurnStart());
+        GY.ForEach(card => card.TurnStart());
+        MonsterZone.ForEach(card => card?.TurnStart());
+        SpellTrapZone.ForEach(card => card?.TurnStart());
     }
 
     public void TurnEnd() { }
 
     public void TakeDamage(int damage) {
         LifePoint -= damage;
-        Log($"承受伤害：{damage}，生命值剩余{LifePoint}");
+        Log($"承受伤害：{damage}, 生命值剩余{LifePoint}");
         if (LifePoint <= 0) {
             Log($"游戏结束");
         }
@@ -66,7 +70,7 @@ public class Player {
             Hand.Add(Deck[idx]);
             Deck.RemoveAt(idx);
         }
-        Log($"抽取{count}张，当前手牌{Hand.Count}");
+        Log($"抽取{count}张, 当前手牌{Hand.Count}");
     }
 
     public bool CheckHand(int id) {
@@ -79,7 +83,7 @@ public class Player {
 
     public void CheckHandLimit() {
         if (Hand.Count > GameDefines.MAX_HAND_COUNT) {
-            Log($"当前手牌{Hand.Count}，执行弃牌处理");
+            Log($"当前手牌{Hand.Count}, 执行弃牌处理");
         }
     }
 
@@ -98,20 +102,17 @@ public class Player {
         Log($"通常召唤怪兽{Hand[selectHand].Name}到区域{zoneId}");
         Card_Monster card = Hand[selectHand] as Card_Monster;
         card.NormalSummon();
-        _normalSummonCount++;
+        _normalSummonCount--;
         MonsterZone[zoneId] = Hand[selectHand];
         Hand.RemoveAt(selectHand);
     }
 
     public bool CheckMonsterCanAttack(int zoneId) {
-        if (MonsterZone[zoneId] == null) {
+        if (zoneId < MonsterZone.Count && MonsterZone[zoneId] == null) {
             return false;
         }
         Card_Monster monster = MonsterZone[zoneId] as Card_Monster;
-        if (monster.Position == MonterPosition.Defense) {
-            return false;
-        }
-        return true;
+        return monster.CanAttack();
     }
 
     public List<int> GetAttackTarget() {
@@ -134,7 +135,9 @@ public class Player {
     public void Attack(int self, Player opponent, int target) {
         Card_Monster selfMonster = MonsterZone[self] as Card_Monster;
         if (target == GameDefines.PLAYER_ZONE) {
+            Log("直接攻击玩家");
             opponent.TakeDamage(selfMonster.Atk);
+            selfMonster.AfterAttack();
             return;
         }
 
@@ -142,7 +145,7 @@ public class Player {
         Log($"{selfMonster.Name}攻击 player{opponent.ID}的{opponentMonster.Name}");
         if (opponentMonster.Position == MonterPosition.Attack) {
             int atk1 = selfMonster.Atk, atk2 = opponentMonster.Atk;
-            Log($"{selfMonster.Name} 攻击力：{atk1}，{opponentMonster.Name} 攻击力：{atk2}");
+            Log($"{selfMonster.Name} 攻击力: {atk1}, player{opponent.ID}: {opponentMonster.Name} 攻击力：{atk2}");
             if (atk1 > atk2) {
                 opponent.DestroyCard(ZoneType.Monster, target);
                 opponent.TakeDamage(atk1 - atk2);
@@ -158,15 +161,15 @@ public class Player {
         }
         else {
             int atk = selfMonster.Atk, def = opponentMonster.Def;
-            Log($"{selfMonster.Name} 攻击力：{atk}，{opponentMonster.Name} 防御力：{atk}");
+            Log($"{selfMonster.Name} 攻击力：{atk}, {opponentMonster.Name} 防御力：{atk}");
             if (atk > def) {
                 opponent.DestroyCard(ZoneType.Monster, target);
             }
             else if (def > atk) {
                 TakeDamage(def - atk);
             }
-
         }
+        selfMonster.AfterAttack();
     }
 
     public void DestroyCard(ZoneType from, int idx) {

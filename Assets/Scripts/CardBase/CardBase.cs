@@ -6,8 +6,6 @@ public abstract class CardBase {
     public CardType CardType { get; protected set; }
     public CardFace Face { get; protected set; }
 
-    public void Destroy() {
-        
-    }
+    public virtual void TurnStart() { }
 
 }

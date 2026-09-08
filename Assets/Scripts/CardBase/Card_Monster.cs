@@ -12,6 +12,10 @@ public class Card_Monster : CardBase {
         _attackCount = 1;
     }
 
+    public override void TurnStart() {
+        _attackCount = 1;
+    }
+
     public void NormalSummon() {
         Face = CardFace.FaceUp;
         Position = MonterPosition.Attack;
@@ -38,8 +42,11 @@ public class Card_Monster : CardBase {
     public bool CanAttack() {
         return _attackCount > 0 && Position == MonterPosition.Attack;
     }
-    public void Attack(Card_Monster opponent) {
-        
+
+    public void BeforeAttack() { }
+
+    public void AfterAttack() {
+        _attackCount--;
     }
 
 }

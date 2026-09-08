@@ -48,7 +48,7 @@ public class GameController {
                 return;
             }
             if (command.IsSelect) {
-                if (player.CheckHand(command.select)) {
+                if (!player.CheckHand(command.select)) {
                     return;
                 }
                 _selectHand = command.select;
@@ -76,7 +76,7 @@ public class GameController {
                     Debug.Log("没有可攻击的怪兽");
                     return;
                 }
-                Debug.Log("准备攻击");
+                Debug.Log($"怪兽区域{command.select}准备攻击");
                 _canSelect = opponent.GetAttackTarget();
                 _selectMode = true;
                 _selectMonster = command.select;
