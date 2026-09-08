@@ -1153,6 +1153,39 @@
                 },
                 {
                     "name": "",
+                    "id": "54296526-40dc-43b4-82e4-f2f6db2915ee",
+                    "path": "<Keyboard>/7",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectHand",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ddcce4dd-8375-4846-a6dd-13073ec52b88",
+                    "path": "<Keyboard>/8",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectHand",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8bcd2c82-14b1-4c12-9277-b2bec7ff1bba",
+                    "path": "<Keyboard>/9",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SelectHand",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "cfcbf24a-005c-4fc5-9f97-7dd71290dd4e",
                     "path": "<Keyboard>/backspace",
                     "interactions": "",

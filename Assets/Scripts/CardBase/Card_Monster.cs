@@ -7,12 +7,9 @@ public class Card_Monster : CardBase {
     public int Def { get; protected set; }
 
     int _attackCount;
+    
     public Card_Monster() : base() {
         CardType = CardType.Monster;
-        _attackCount = 1;
-    }
-
-    public override void TurnStart() {
         _attackCount = 1;
     }
 
@@ -47,6 +44,15 @@ public class Card_Monster : CardBase {
 
     public void AfterAttack() {
         _attackCount--;
+    }
+
+    public override void TurnStart() {
+        _attackCount = 1;
+    }
+
+    public override string ShowInfo() {
+        string info = $"名称：{Name}, 攻击力：{Atk}, 防御力：{Def}";
+        return info;
     }
 
 }

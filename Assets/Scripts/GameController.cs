@@ -10,6 +10,8 @@ public class GameController {
     int _selectMonster = -1;
     bool IsSelectMonster => _selectMonster != -1;
 
+    public event Action<string> ShowInfo;
+
     public GameController(bool first, PlayerData data1, PlayerData data2) {
         _gameState = new(first, data1, data2);
         _selectMode = false;
@@ -46,6 +48,11 @@ public class GameController {
                     ResetState();
                 }
                 return;
+            }
+            if (command.left) {
+                
+            }
+            if (command.right) {
             }
             if (command.IsSelect) {
                 if (!player.CheckHand(command.select)) {

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -5,48 +7,63 @@ using UnityEngine.InputSystem.Controls;
 public class InputManager : MonoBehaviour {
     [SerializeField] InputActionReference _drawAction;
     [SerializeField] InputActionReference _nextAction;
-    [SerializeField] InputActionReference _selectHandAction;
+    [SerializeField] InputActionReference _left;
+    [SerializeField] InputActionReference _right;
     [SerializeField] InputActionReference _cancelAction;
     [SerializeField] InputActionReference _normalSummonAction;
     [SerializeField] InputActionReference _attackAction;
 
-    public void GetInput(ref InputData inputData) {
-        if (_drawAction.action.WasPressedThisFrame()) {
-            inputData.draw = true;
-        }
-        if (_nextAction.action.WasPressedThisFrame()) {
-            inputData.nextPhase = true;
-        }
-        if (_selectHandAction.action.WasPressedThisFrame()) {
-            KeyControl keyControl = _selectHandAction.action.activeControl as KeyControl;
-            inputData.select = keyControl.keyCode - Key.Digit1;
-        }
-        if (_normalSummonAction.action.WasPressedThisFrame()) {
-            inputData.normalSummon = true;
-        }
-        if (_cancelAction.action.WasPressedThisFrame()) {
-            inputData.cancel = true;
-        }
-        inputData.Attack = _attackAction.action.IsPressed();
+    Dictionary<Command, InputActionReference> _acitionsDic;
 
+    public void Start() {
+        _acitionsDic = new() {
+            {Command.Draw, _drawAction},
+            {Command.NextPhase, _nextAction},
+            {Command.NormalSummon, _normalSummonAction},
+            {Command.Attack, _attackAction},
+            {Command.Cancel, _cancelAction},
+            {Command.Left, _left},
+            {Command.Right, _right},
+        };
+    }
+
+
+    public void GetInput(ref InputData inputData) {
+        foreach (var action in _acitionsDic) {
+            if (action.Value.action.WasPressedThisFrame()) {
+                inputData.Clicks[action.Key] = true;
+            }
+        }
     }
 }
 
 public class InputData {
     public bool draw;
     public bool nextPhase;
-    public int select = -1;
-    public bool IsSelect => select != -1;
+    public bool left;
+    public bool right;
     public bool normalSummon;
     public bool cancel;
     public bool Attack;
+    public Dictionary<Command, bool> Clicks;
+
+    public InputData() {
+        Clicks = new() {
+             {Command.Draw, false},
+             {Command.NextPhase, false},
+             {Command.NormalSummon, false},
+             {Command.Attack, false},
+             {Command.Cancel, false},
+             {Command.Left, false},
+             {Command.Right, false},
+        };
+
+    }
 
     public void Reset() {
-        draw = false;
-        nextPhase = false;
-        select = -1;
-        normalSummon = false;
-        cancel = false;
+        foreach (var command in Clicks.Keys) {
+            Clicks[command] = false;
+        }
     }
 
 }

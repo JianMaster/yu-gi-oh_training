@@ -26,7 +26,12 @@ public class GameState {
             CurPhase = Phase.Draw;
         }
         else {
-            CurPhase++;
+            if (Turn == 1 && CurPhase == Phase.Main1) {
+                CurPhase = Phase.End;
+            }
+            else {
+                CurPhase++;
+            }
         }
 
         Debug.Log($"当前回合{Turn}, 当前阶段{CurPhase}");

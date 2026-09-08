@@ -57,3 +57,14 @@ public enum MonterPosition {
     Attack,
     Defense
 }
+
+
+public enum Command {
+    Draw,
+    NextPhase,
+    NormalSummon,
+    Attack,
+    Cancel,
+    Left,
+    Right,
+}
