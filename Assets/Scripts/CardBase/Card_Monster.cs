@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class Card_Monster : CardBase {
     public MonsterAttribute Attribute { get; protected set; }
     public MonsterType Type { get; protected set; }
@@ -7,7 +9,7 @@ public class Card_Monster : CardBase {
     public int Def { get; protected set; }
 
     int _attackCount;
-    
+
     public Card_Monster() : base() {
         CardType = CardType.Monster;
         _attackCount = 1;

@@ -12,8 +12,7 @@ public class GameController {
 
     public event Action<string> ShowInfo;
 
-    public GameController(bool first, PlayerData data1, PlayerData data2) {
-        _gameState = new(first, data1, data2);
+    public GameController() {
         _selectMode = false;
     }
 

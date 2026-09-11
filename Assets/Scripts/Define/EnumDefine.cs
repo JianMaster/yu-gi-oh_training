@@ -28,12 +28,23 @@ public enum Phase
     End
 }
 
+public enum InputType {
+    Confirm,
+    Cancel,
+    Left,
+    Right,
+    Up,
+    Down,
+}
+
 public enum CommandType {
+    None,
     NormalSummon,
     SpecialSummon,
     MonsterSet,
     MonsetFilp,
     Attack,
+    ChangePosition,
     SpellTrapSet,
     SpellTrapActivate
 }
@@ -56,15 +67,4 @@ public enum MonsterType {
 public enum MonterPosition {
     Attack,
     Defense
-}
-
-
-public enum Command {
-    Draw,
-    NextPhase,
-    NormalSummon,
-    Attack,
-    Cancel,
-    Left,
-    Right,
 }

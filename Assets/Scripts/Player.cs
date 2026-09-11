@@ -30,10 +30,11 @@ public class Player {
         _data = data;
         string[] cardIds = data.Deck.Split(' ');
         foreach (var cardId in cardIds) {
-            CardBase card = CardTool.CreateInstance(cardId);
+            CardBase card = CardFactory.CreateInstance(cardId);
             if (card != null) {
                 Deck.Add(card);
                 card.Belong = ID;
+                card.ChangeZone(ZoneType.Deck, Deck.Count - 1);
             }
         }
 
@@ -67,6 +68,7 @@ public class Player {
             }
 
             int idx = Deck.Count - 1;
+            Deck[idx].ChangeZone(ZoneType.Hand, Hand.Count);
             Hand.Add(Deck[idx]);
             Deck.RemoveAt(idx);
         }
@@ -87,6 +89,10 @@ public class Player {
         }
     }
 
+    public List<CardBase> GetZoneCards(ZoneType zoneType) {
+        return _zone[zoneType];
+    }
+
     public List<int> GetAvailableMonsterZone() {
         List<int> zoneIds = new();
         for (int i = 0; i < MonsterZone.Count; ++i) {
@@ -102,6 +108,7 @@ public class Player {
         Log($"通常召唤怪兽{Hand[selectHand].Name}到区域{zoneId}");
         Card_Monster card = Hand[selectHand] as Card_Monster;
         card.NormalSummon();
+        card.ChangeZone(ZoneType.Monster, zoneId);
         _normalSummonCount--;
         MonsterZone[zoneId] = Hand[selectHand];
         Hand.RemoveAt(selectHand);
@@ -176,6 +183,7 @@ public class Player {
         List<CardBase> fromzone = _zone[from];
         CardBase card = fromzone[idx];
         fromzone[idx] = null;
+        card.ChangeZone(ZoneType.GY, GY.Count);
         GY.Add(card);
 
         Log($"卡牌{card.Name}被破坏");

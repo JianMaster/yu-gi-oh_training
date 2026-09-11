@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class Main : MonoBehaviour {
     GameController _game;
+    GameState _state;
     [SerializeField] InputManager _inputManager;
     [SerializeField] bool player1_first;
     [SerializeField] PlayerData data1;
@@ -10,8 +11,9 @@ public class Main : MonoBehaviour {
     InputData _inputData = new();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
-        _game = new(player1_first, data1, data2);
-        _game.GameStart();
+        _state = new(player1_first, data1, data2);
+        _game = new();
+        // _game.GameStart();
     }
 
     // Update is called once per frame

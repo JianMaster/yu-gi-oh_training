@@ -5,25 +5,21 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
 public class InputManager : MonoBehaviour {
-    [SerializeField] InputActionReference _drawAction;
-    [SerializeField] InputActionReference _nextAction;
+    [SerializeField] InputActionReference _confirmAction;
     [SerializeField] InputActionReference _left;
     [SerializeField] InputActionReference _right;
+    [SerializeField] InputActionReference _up;
+    [SerializeField] InputActionReference _down;
     [SerializeField] InputActionReference _cancelAction;
-    [SerializeField] InputActionReference _normalSummonAction;
-    [SerializeField] InputActionReference _attackAction;
 
-    Dictionary<Command, InputActionReference> _acitionsDic;
+    Dictionary<InputType, InputActionReference> _acitionsDic;
 
     public void Start() {
         _acitionsDic = new() {
-            {Command.Draw, _drawAction},
-            {Command.NextPhase, _nextAction},
-            {Command.NormalSummon, _normalSummonAction},
-            {Command.Attack, _attackAction},
-            {Command.Cancel, _cancelAction},
-            {Command.Left, _left},
-            {Command.Right, _right},
+            {InputType.Confirm, _confirmAction},
+            {InputType.Cancel, _cancelAction},
+            {InputType.Left, _left},
+            {InputType.Right, _right},
         };
     }
 
@@ -31,38 +27,37 @@ public class InputManager : MonoBehaviour {
     public void GetInput(ref InputData inputData) {
         foreach (var action in _acitionsDic) {
             if (action.Value.action.WasPressedThisFrame()) {
-                inputData.Clicks[action.Key] = true;
+                inputData[action.Key] = true;
             }
         }
     }
 }
 
 public class InputData {
-    public bool draw;
-    public bool nextPhase;
-    public bool left;
-    public bool right;
-    public bool normalSummon;
-    public bool cancel;
-    public bool Attack;
-    public Dictionary<Command, bool> Clicks;
+    Dictionary<InputType, bool> _clicks;
+    public bool this[InputType key] {
+        get {
+            return _clicks[key];
+        }
+        set {
+            _clicks[key] = value;
+        }
+    }
+
 
     public InputData() {
-        Clicks = new() {
-             {Command.Draw, false},
-             {Command.NextPhase, false},
-             {Command.NormalSummon, false},
-             {Command.Attack, false},
-             {Command.Cancel, false},
-             {Command.Left, false},
-             {Command.Right, false},
+        _clicks = new() {
+            {InputType.Confirm, false},
+            {InputType.Cancel, false},
+            {InputType.Left, false},
+            {InputType.Right, false},
         };
 
     }
 
     public void Reset() {
-        foreach (var command in Clicks.Keys) {
-            Clicks[command] = false;
+        foreach (var command in _clicks.Keys) {
+            _clicks[command] = false;
         }
     }
 
