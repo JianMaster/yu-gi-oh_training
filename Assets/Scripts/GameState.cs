@@ -19,6 +19,9 @@ public class GameState {
         Debug.Log($"当前先手玩家：{(first ? 1 : 2)}");
     }
 
+    public Player GetOpponent(Player player) {
+        return player == _player1 ? _player2 : _player1;
+    }
 
     public void NextPhase() {
         if (CurPhase == Phase.End) {

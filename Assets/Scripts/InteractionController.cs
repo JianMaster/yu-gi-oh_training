@@ -8,56 +8,75 @@ public class InteractionController {
         Zone,
         Card,
     }
+    class InteractionContext {
+        public Player player;
+        public Player opponent;
+        public ZoneType curZone = ZoneType.Hand;
+        public CardBase selectedCard = null;
+        public List<CommandType> commands = null;
+        public CommandType selectedCommand = CommandType.None;
+    }
+
     const int DEFALUT_ID = -1;
     GameState _state;
-    ZoneType _curSelectZone = ZoneType.Hand;
-    SelectState _selectMode = SelectState.None;
+    SelectState _curState;
+    InteractionContext _context;
 
     Command _defaultCommand = new(CommandType.None);
     Command _command = new(CommandType.None);
 
     public InteractionController(GameState state) {
         _state = state;
+        _curState = SelectState.None;
+        ChangePlayer(_state.TurnOwner);
     }
 
-    int _selectCardId = DEFALUT_ID;
-    List<CommandType> _canSelectCommands = new();
+    public void ChangePlayer(Player player) {
+        _context = new() {
+            player = player,
+            opponent = _state.GetOpponent(player)
+        };
+    }
+
+
     public Command GetCommand(InputData inputData) {
-        if (_selectMode == SelectState.None) {
-            SelcetFree(inputData);
+        if (_curState == SelectState.None) {
+            SelcetFree(inputData, _context);
         }
-        else if (_selectMode == SelectState.Command) {
-            return SelectCommand(inputData, _canSelectCommands, _selectCardId);
+        else if (_curState == SelectState.Command) {
+            return SelectCommand(inputData, _context);
         }
-        else if (_selectMode == SelectState.Zone) {
-            return SelectZone(inputData);
+        else if (_curState == SelectState.Zone) {
+            return SelectZone(inputData, _context);
         }
 
         return _defaultCommand;
     }
-    
-    Command SelcetFree(InputData inputData) {
+
+    int _selectCardId = DEFALUT_ID;
+    Command SelcetFree(InputData inputData, InteractionContext context) {
         if (inputData[InputType.Left] || inputData[InputType.Right]) {
-            var player = _state.TurnOwner;
-            var list = player.GetZoneCards(_curSelectZone);
+            var player = context.player;
+            var list = player.GetZoneCards(context.curZone);
             _selectCardId += inputData[InputType.Left] ? -1 : 1;
             _selectCardId = Mathf.Clamp(_selectCardId, 0, list.Count - 1);
-            Debug.Log($"当前玩家: {player.ID}, 当前选择区域: {_curSelectZone}, 当前选择id: {_selectCardId}");
+            Debug.Log($"当前玩家: {player.ID}, 当前选择区域: {context.curZone}, 当前选择id: {_selectCardId}");
             Debug.Log(list[_selectCardId].ShowInfo());
         }
 
         if (inputData[InputType.Confirm]) {
-            var player = _state.TurnOwner;
-            var list = player.GetZoneCards(_curSelectZone);
+            var list = context.player.GetZoneCards(context.curZone);
             if (_selectCardId == DEFALUT_ID || list[_selectCardId] == null) {
                 Debug.Log("当前无可操作卡");
                 return _defaultCommand;
             }
             if (list[_selectCardId] is Card_Monster card) {
-                _canSelectCommands = GetMonsterUsableCommand(card);
-                if (_canSelectCommands.Count != 0) {
-                    _selectMode = SelectState.Command;
-                    Debug.Log($"进入指令选择，当前可用指令: {string.Join(" ", _canSelectCommands)}");
+                List<CommandType> commands = GetMonsterUsableCommand(card);
+                if (commands.Count != 0) {
+                    context.selectedCard = list[_selectCardId];
+                    context.commands = commands;
+                    _curState = SelectState.Command;
+                    Debug.Log($"进入指令选择，当前可用指令: {string.Join(" ", commands)}");
                 }
                 else {
                     Debug.Log("当前无可操作选项");
@@ -68,21 +87,22 @@ public class InteractionController {
     }
 
     int _selectCommandId = DEFALUT_ID;
-    Command SelectCommand(InputData inputData, List<CommandType> commands, CardBase card) {
+    Command SelectCommand(InputData inputData, InteractionContext context) {
         if (inputData[InputType.Cancel]) {
-            ResetState();
+            ResetState(ref context);
             return _defaultCommand;
         }
 
         if (inputData[InputType.Left] || inputData[InputType.Right]) {
             _selectCommandId += inputData[InputType.Left] ? -1 : 1;
-            _selectCommandId = Mathf.Clamp(_selectCommandId, 0, commands.Count - 1);
+            _selectCommandId = Mathf.Clamp(_selectCommandId, 0, context.commands.Count - 1);
             Debug.Log($"当前选择id: {_selectCommandId}");
         }
 
         if (inputData[InputType.Confirm] && _selectCommandId != DEFALUT_ID) {
-            if (commands[_selectCommandId] == CommandType.NormalSummon) {
-                _selectMode = SelectState.Zone;
+            if (context.commands[_selectCommandId] == CommandType.NormalSummon) {
+                _curState = SelectState.Zone;
+                _context.selectedCommand = CommandType.NormalSummon;
                 Debug.Log("选择召唤区域");
             }
         }
@@ -91,18 +111,20 @@ public class InteractionController {
 
     }
 
-    Command SelectZone(InputData inputData) {
+    Command SelectZone(InputData inputData, InteractionContext context) {
         if (inputData[InputType.Cancel]) {
-            ResetState();
+            ResetState(ref context);
             return _defaultCommand;
         }
+        return _defaultCommand;
     }
 
-    void ResetState() {
+    void ResetState(ref InteractionContext context) {
         _selectCardId = DEFALUT_ID;
         _selectCommandId = DEFALUT_ID;
-        _selectMode = SelectState.None;
-        _curSelectZone = ZoneType.Hand;
+        context.curZone = ZoneType.Hand;
+        context.selectedCard = null;
+        context.commands = null;
         Debug.Log("取消操作");
     }
 
