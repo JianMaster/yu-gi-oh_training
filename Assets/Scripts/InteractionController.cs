@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InteractionController {
-    enum SelectType {
+    enum SelectState {
         None,
         Command,
         Zone,
@@ -11,11 +11,7 @@ public class InteractionController {
     const int DEFALUT_ID = -1;
     GameState _state;
     ZoneType _curSelectZone = ZoneType.Hand;
-    int _selectCardId = DEFALUT_ID;
-    int _selectCommandId = DEFALUT_ID;
-    SelectType _selectMode = SelectType.None;
-    List<CardBase> _selectCards = new();
-    List<CommandType> _canSelectCommands = new();
+    SelectState _selectMode = SelectState.None;
 
     Command _defaultCommand = new(CommandType.None);
     Command _command = new(CommandType.None);
@@ -24,13 +20,23 @@ public class InteractionController {
         _state = state;
     }
 
+    int _selectCardId = DEFALUT_ID;
+    List<CommandType> _canSelectCommands = new();
     public Command GetCommand(InputData inputData) {
-        if (_selectMode == SelectType.Command) {
-            return SelectCommandMode(inputData);
-        }else if(_selectMode == SelectType.Zone) {
-            return SelectZoneMode(inputData);
+        if (_selectMode == SelectState.None) {
+            SelcetFree(inputData);
+        }
+        else if (_selectMode == SelectState.Command) {
+            return SelectCommand(inputData, _canSelectCommands, _selectCardId);
+        }
+        else if (_selectMode == SelectState.Zone) {
+            return SelectZone(inputData);
         }
 
+        return _defaultCommand;
+    }
+    
+    Command SelcetFree(InputData inputData) {
         if (inputData[InputType.Left] || inputData[InputType.Right]) {
             var player = _state.TurnOwner;
             var list = player.GetZoneCards(_curSelectZone);
@@ -50,7 +56,7 @@ public class InteractionController {
             if (list[_selectCardId] is Card_Monster card) {
                 _canSelectCommands = GetMonsterUsableCommand(card);
                 if (_canSelectCommands.Count != 0) {
-                    _selectMode = SelectType.Command;
+                    _selectMode = SelectState.Command;
                     Debug.Log($"进入指令选择，当前可用指令: {string.Join(" ", _canSelectCommands)}");
                 }
                 else {
@@ -58,12 +64,11 @@ public class InteractionController {
                 }
             }
         }
-
-
         return _defaultCommand;
     }
 
-    Command SelectCommandMode(InputData inputData) {
+    int _selectCommandId = DEFALUT_ID;
+    Command SelectCommand(InputData inputData, List<CommandType> commands, CardBase card) {
         if (inputData[InputType.Cancel]) {
             ResetState();
             return _defaultCommand;
@@ -71,13 +76,13 @@ public class InteractionController {
 
         if (inputData[InputType.Left] || inputData[InputType.Right]) {
             _selectCommandId += inputData[InputType.Left] ? -1 : 1;
-            _selectCommandId = Mathf.Clamp(_selectCommandId, 0, _canSelectCommands.Count - 1);
+            _selectCommandId = Mathf.Clamp(_selectCommandId, 0, commands.Count - 1);
             Debug.Log($"当前选择id: {_selectCommandId}");
         }
 
-        if (inputData[InputType.Confirm] && _selectCardId != DEFALUT_ID) {
-            if(_canSelectCommands[_selectCommandId] == CommandType.NormalSummon) {
-                _selectMode = SelectType.Zone;
+        if (inputData[InputType.Confirm] && _selectCommandId != DEFALUT_ID) {
+            if (commands[_selectCommandId] == CommandType.NormalSummon) {
+                _selectMode = SelectState.Zone;
                 Debug.Log("选择召唤区域");
             }
         }
@@ -86,7 +91,7 @@ public class InteractionController {
 
     }
 
-    Command SelectZoneMode(InputData inputData) {
+    Command SelectZone(InputData inputData) {
         if (inputData[InputType.Cancel]) {
             ResetState();
             return _defaultCommand;
@@ -96,10 +101,8 @@ public class InteractionController {
     void ResetState() {
         _selectCardId = DEFALUT_ID;
         _selectCommandId = DEFALUT_ID;
-        _selectMode = SelectType.None;
+        _selectMode = SelectState.None;
         _curSelectZone = ZoneType.Hand;
-        _selectCards.Clear();
-        _canSelectCommands.Clear();
         Debug.Log("取消操作");
     }
 
