@@ -15,6 +15,7 @@ public class InteractionController {
         public CardBase selectedCard = null;
         public List<CommandType> commands = null;
         public CommandType selectedCommand = CommandType.None;
+        public List<int> monsterZoneId = null;
     }
 
     const int DEFALUT_ID = -1;
@@ -22,8 +23,7 @@ public class InteractionController {
     SelectState _curState;
     InteractionContext _context;
 
-    Command _defaultCommand = new(CommandType.None);
-    Command _command = new(CommandType.None);
+    Command _defaultCommand = new();
 
     public InteractionController(GameState state) {
         _state = state;
@@ -38,10 +38,24 @@ public class InteractionController {
         };
     }
 
+    bool TryGetSelect(InputData inputData, ref int selectId, int count) {
+        if (inputData[InputType.Left] || inputData[InputType.Right]) {
+            selectId += inputData[InputType.Left] ? -1 : 1;
+            selectId = Mathf.Clamp(selectId, 0, count - 1);
+            return true;
+        }
+        return false;
+    }
 
     public Command GetCommand(InputData inputData) {
         if (_curState == SelectState.None) {
-            SelcetFree(inputData, _context);
+            Selcet(inputData, _context);
+            if (inputData[InputType.NextPhase]) {
+                return new Command() {
+                    Type = CommandType.NextPhase,
+                    Excuter = _context.player
+                };
+            }
         }
         else if (_curState == SelectState.Command) {
             return SelectCommand(inputData, _context);
@@ -54,12 +68,10 @@ public class InteractionController {
     }
 
     int _selectCardId = DEFALUT_ID;
-    Command SelcetFree(InputData inputData, InteractionContext context) {
-        if (inputData[InputType.Left] || inputData[InputType.Right]) {
+    Command Selcet(InputData inputData, InteractionContext context) {
+        if (TryGetSelect(inputData, ref _selectCardId, context.player.GetZoneCards(context.curZone).Count - 1)) {
             var player = context.player;
             var list = player.GetZoneCards(context.curZone);
-            _selectCardId += inputData[InputType.Left] ? -1 : 1;
-            _selectCardId = Mathf.Clamp(_selectCardId, 0, list.Count - 1);
             Debug.Log($"当前玩家: {player.ID}, 当前选择区域: {context.curZone}, 当前选择id: {_selectCardId}");
             Debug.Log(list[_selectCardId].ShowInfo());
         }
@@ -71,7 +83,7 @@ public class InteractionController {
                 return _defaultCommand;
             }
             if (list[_selectCardId] is Card_Monster card) {
-                List<CommandType> commands = GetMonsterUsableCommand(card);
+                List<CommandType> commands = GetMonsterUsableCommand(context.player, card);
                 if (commands.Count != 0) {
                     context.selectedCard = list[_selectCardId];
                     context.commands = commands;
@@ -93,16 +105,15 @@ public class InteractionController {
             return _defaultCommand;
         }
 
-        if (inputData[InputType.Left] || inputData[InputType.Right]) {
-            _selectCommandId += inputData[InputType.Left] ? -1 : 1;
-            _selectCommandId = Mathf.Clamp(_selectCommandId, 0, context.commands.Count - 1);
+        if (TryGetSelect(inputData, ref _selectCommandId, context.commands.Count - 1)) {
             Debug.Log($"当前选择id: {_selectCommandId}");
         }
 
         if (inputData[InputType.Confirm] && _selectCommandId != DEFALUT_ID) {
             if (context.commands[_selectCommandId] == CommandType.NormalSummon) {
                 _curState = SelectState.Zone;
-                _context.selectedCommand = CommandType.NormalSummon;
+                context.selectedCommand = CommandType.NormalSummon;
+                context.monsterZoneId = context.player.GetAvailableMonsterZone();
                 Debug.Log("选择召唤区域");
             }
         }
@@ -111,10 +122,27 @@ public class InteractionController {
 
     }
 
+    int _selectZoneId = DEFALUT_ID;
     Command SelectZone(InputData inputData, InteractionContext context) {
         if (inputData[InputType.Cancel]) {
             ResetState(ref context);
             return _defaultCommand;
+        }
+
+        if (TryGetSelect(inputData, ref _selectZoneId, context.monsterZoneId.Count - 1)) {
+            Debug.Log($"当前选择区域: {_selectZoneId}");
+        }
+
+        if (inputData[InputType.Confirm] && _selectZoneId != DEFALUT_ID) {
+            Command command = new() {
+                Type = context.selectedCommand,
+                Excuter = context.player,
+                TargetCard = context.selectedCard,
+                TargetZoneId = _selectZoneId
+            };
+            Debug.Log($"执行指令: {command.Type}");
+            ResetState(ref context);
+            return command;
         }
         return _defaultCommand;
     }
@@ -125,14 +153,18 @@ public class InteractionController {
         context.curZone = ZoneType.Hand;
         context.selectedCard = null;
         context.commands = null;
+        context.selectedCommand = CommandType.None;
+        context.monsterZoneId = null;
         Debug.Log("取消操作");
     }
 
-    public List<CommandType> GetMonsterUsableCommand(Card_Monster card) {
+    public List<CommandType> GetMonsterUsableCommand(Player player, Card_Monster card) {
         List<CommandType> list = new();
         if (card.ZoneType == ZoneType.Hand) {
-            list.Add(CommandType.NormalSummon);
-            list.Add(CommandType.MonsterSet);
+            if (player.GetAvailableMonsterZone().Count != 0) {
+                list.Add(CommandType.NormalSummon);
+                list.Add(CommandType.MonsterSet);
+            }
         }
         else if (card.ZoneType == ZoneType.Monster) {
             if (card.Position == MonterPosition.Attack) {

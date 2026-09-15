@@ -35,6 +35,7 @@ public enum InputType {
     Right,
     Up,
     Down,
+    NextPhase,
 }
 
 public enum CommandType {
@@ -46,7 +47,8 @@ public enum CommandType {
     Attack,
     ChangePosition,
     SpellTrapSet,
-    SpellTrapActivate
+    SpellTrapActivate,
+    NextPhase,
 }
 
 public enum EffectType {

@@ -11,6 +11,8 @@ public class GameController {
     bool IsSelectMonster => _selectMonster != -1;
 
     public event Action<string> ShowInfo;
+    public event Action OnNextPhase;
+    public event Action<Player> OnEndPhase;
 
     public GameController() {
         _selectMode = false;
@@ -23,7 +25,7 @@ public class GameController {
     }
 
     List<int> _canSelect = new();
-    public void ExcuteCommand(InputData command) {
+    public void ExcuteCommand(Command command) {
         Player player = _gameState.TurnOwner;
         Player opponent = _gameState.Opponent;
 
@@ -94,7 +96,7 @@ public class GameController {
             NextPhase();
         }
 
-        if (command.nextPhase) {
+        if (command.Type == CommandType.NextPhase) {
             NextPhase();
             return;
         }
