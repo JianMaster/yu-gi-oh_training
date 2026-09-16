@@ -14,9 +14,9 @@ public class Main : MonoBehaviour {
     void Start() {
         _state = new(player1_first, data1, data2);
         _interaction = new(_state);
-        _game = new();
-        _game.OnNextPhase += _state.NextPhase;
-        _game.OnEndPhase += _interaction.ChangePlayer;
+        _game = new(_state);
+        
+        _state.OnNextTurn += _interaction.ChangePlayer;
 
         _game.GameStart();
     }

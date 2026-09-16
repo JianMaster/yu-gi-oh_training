@@ -460,12 +460,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02eae40f965e40c4f93d70f0fa153017, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputManager
-  _drawAction: {fileID: -3508836965628358708, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  _nextAction: {fileID: -6343375349453744189, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  _selectHandAction: {fileID: 5978244877202903331, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  _confirmAction: {fileID: -4387033960870282325, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  _left: {fileID: -7168858072280436323, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  _right: {fileID: 4006062920050935279, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  _up: {fileID: -3806993396927843692, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  _down: {fileID: 6324189156472842622, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   _cancelAction: {fileID: -25905241400582670, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  _normalSummonAction: {fileID: 4747298156921077564, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  _attackAction: {fileID: 4554956263798982212, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  _nextPhase: {fileID: -6343375349453744189, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
 --- !u!4 &834552272
 Transform:
   m_ObjectHideFlags: 0

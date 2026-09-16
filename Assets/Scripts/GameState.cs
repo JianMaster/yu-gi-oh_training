@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GameState {
@@ -9,6 +10,10 @@ public class GameState {
     public int Turn { get; private set; } = 1;
     public Player TurnOwner => (Turn + (_first ? 0 : 1)) % 2 == 1 ? _player1 : _player2;
     public Player Opponent => TurnOwner == _player1 ? _player2 : _player1;
+
+    public event Action<string> ShowInfo;
+    public event Action<Phase> OnNextPhase;
+    public event Action<Player> OnNextTurn;
 
     public GameState(bool first, PlayerData data1, PlayerData data2) {
         CurPhase = Phase.Draw;
@@ -27,6 +32,7 @@ public class GameState {
         if (CurPhase == Phase.End) {
             Turn++;
             CurPhase = Phase.Draw;
+            OnNextTurn?.Invoke(TurnOwner);
         }
         else {
             if (Turn == 1 && CurPhase == Phase.Main1) {
@@ -35,7 +41,9 @@ public class GameState {
             else {
                 CurPhase++;
             }
+            OnNextPhase?.Invoke(CurPhase);
         }
+
 
         Debug.Log($"当前回合{Turn}, 当前阶段{CurPhase}");
     }

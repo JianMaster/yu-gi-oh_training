@@ -3,6 +3,8 @@ using UnityEngine;
 public partial class TextData {
     private TextData() {
         _texts_ZH = new() {
+            {Text_ID.Draw, "player%d,抽取%d张, 当前手牌%d"},
+            {Text_ID.NormalSummon, "player%d,通常召唤%s到区域%d"},
             {Text_ID.Battle_1, "战斗1"},
         };
     }
