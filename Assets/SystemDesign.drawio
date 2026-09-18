@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="eJJKikZ4s_OY3Lq9CdG-" name="第 1 页">
-        <mxGraphModel dx="306" dy="599" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="286" dy="590" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -85,59 +85,61 @@
                 <mxCell id="33" value="Input/UIAction" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="380" y="130" width="120" height="60" as="geometry"/>
                 </mxCell>
+                <mxCell id="57" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="34" target="56">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="34" value="GameController" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="380" y="420" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="42" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="36" target="34" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="36" value="EffectData" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
-                    <mxGeometry x="380" y="320" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="41" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="39" target="36" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="41" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="39" target="34" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="440" y="320" as="targetPoint"/>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="39" value="Command" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="380" y="220" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="45" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="43" target="44">
+                <mxCell id="45" value="" style="edgeStyle=none;html=1;" parent="1" source="43" target="44" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="43" value="点击卡牌" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="43" value="点击卡牌" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="590" y="130" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="47" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="44" target="46">
+                <mxCell id="47" value="" style="edgeStyle=none;html=1;" parent="1" source="44" target="46" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="44" value="根据当前卡牌能力显示相应UI" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                <mxCell id="44" value="根据当前卡牌能力显示相应UI" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="590" y="270" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="49" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="46" target="48">
+                <mxCell id="49" value="" style="edgeStyle=none;html=1;" parent="1" source="46" target="48" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="46" value="选择功能" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                <mxCell id="46" value="选择功能" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="590" y="410" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="51" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="48" target="50">
+                <mxCell id="51" value="" style="edgeStyle=none;html=1;" parent="1" source="48" target="50" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="48" value="生成Command指令" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                <mxCell id="48" value="生成Command指令" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="590" y="550" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="53" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="50" target="52">
+                <mxCell id="53" value="" style="edgeStyle=none;html=1;" parent="1" source="50" target="52" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="50" value="GameController执行指令" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                <mxCell id="50" value="GameController执行指令" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="590" y="690" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="55" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="52" target="54">
+                <mxCell id="55" value="" style="edgeStyle=none;html=1;" parent="1" source="52" target="54" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="52" value="Effect" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                <mxCell id="52" value="Effect" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="590" y="830" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="54" value="动画处理" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                <mxCell id="54" value="动画处理" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="590" y="970" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="GameState" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+                    <mxGeometry x="380" y="560" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

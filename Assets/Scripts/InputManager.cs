@@ -63,7 +63,7 @@ public class InputData {
     }
 
     public void Reset() {
-        foreach (var command in _clicks.Keys) {
+        foreach (var command in _clicks.Keys.ToList()) {
             _clicks[command] = false;
         }
     }

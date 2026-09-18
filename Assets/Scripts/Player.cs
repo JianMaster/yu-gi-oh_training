@@ -75,14 +75,6 @@ public class Player {
         Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.Draw), ID, count, _hand.Count));
     }
 
-    public bool CheckHand(int id) {
-        if (id >= _hand.Count) {
-            Log($"手牌选择错误：{id}");
-            return false;
-        }
-        return true;
-    }
-
     public void CheckHandLimit() {
         if (_hand.Count > GameDefines.MAX_HAND_COUNT) {
             Log($"当前手牌{_hand.Count}, 执行弃牌处理");
