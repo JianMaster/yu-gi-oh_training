@@ -9,10 +9,11 @@ public class Card_Monster : CardBase {
     public int Def { get; protected set; }
 
     int _attackCount;
+    int _changePositionCount;
 
     public Card_Monster() : base() {
         CardType = CardType.Monster;
-        _attackCount = 1;
+        TurnStart();
     }
 
     public void NormalSummon() {
@@ -34,7 +35,11 @@ public class Card_Monster : CardBase {
         Face = CardFace.FaceUp;
     }
 
+    public bool CanChangePosition() {
+        return _changePositionCount > 0;
+    }
     public void ChangePosition() {
+        _changePositionCount--;
         Position = Position == MonterPosition.Attack ? MonterPosition.Defense : MonterPosition.Attack;
     }
 
@@ -50,6 +55,7 @@ public class Card_Monster : CardBase {
 
     public override void TurnStart() {
         _attackCount = 1;
+        _changePositionCount = 1;
     }
 
     public override string ShowInfo() {

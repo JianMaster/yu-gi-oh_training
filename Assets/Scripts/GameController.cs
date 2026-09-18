@@ -72,6 +72,10 @@ public class GameController {
     void NormalSummon(Player player, CardBase card, int zoneId) {
         player.NormalSummon(card as Card_Monster, zoneId);
     }
+
+    void Attack() {
+        
+    }
     void NextPhase() {
         ResetState();
         _gameState.NextPhase();

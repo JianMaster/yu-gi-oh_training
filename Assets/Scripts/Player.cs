@@ -113,19 +113,13 @@ public class Player {
         return monster.CanAttack();
     }
 
-    public List<int> GetAttackTarget() {
-        List<int> targets = new();
+    public List<CardBase> GetAttackTarget() {
+        List<CardBase> targets = new();
         for (int i = 0; i < _monsterZone.Count; ++i) {
             if (_monsterZone[i] != null) {
-                targets.Add(i);
+                targets.Add(_monsterZone[i]);
             }
         }
-        // 空场
-        if (targets.Count == 0) {
-            targets.Add(GameDefines.PLAYER_ZONE);
-        }
-
-        Log("当前可攻击对象" + string.Join(" ", targets));
 
         return targets;
     }
