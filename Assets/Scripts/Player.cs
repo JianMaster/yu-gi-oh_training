@@ -68,9 +68,11 @@ public class Player {
             }
 
             int idx = _deck.Count - 1;
-            _deck[idx].ChangeZone(ZoneType.Hand, _hand.Count);
-            _hand.Add(_deck[idx]);
+            CardBase card = _deck[idx];
+            _hand.Add(card);
             _deck.RemoveAt(idx);
+            card.ChangeZone(ZoneType.Hand, _hand.Count - 1);
+            Debug.Log(TextData.Instance.GetFormatText(Text_ID.DrawInfo, card.ShowInfo()));
         }
         Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.Draw), ID, count, _hand.Count));
     }
@@ -98,19 +100,11 @@ public class Player {
 
     public void NormalSummon(Card_Monster card, int zoneId) {
         Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.NormalSummon), ID, card.Name, zoneId));
-        card.NormalSummon();
-        card.ChangeZone(ZoneType.Monster, zoneId);
         _normalSummonCount--;
         _monsterZone[zoneId] = _hand[card.ZoneId];
         _hand.RemoveAt(card.ZoneId);
-    }
-
-    public bool CheckMonsterCanAttack(int zoneId) {
-        if (zoneId < _monsterZone.Count && _monsterZone[zoneId] == null) {
-            return false;
-        }
-        Card_Monster monster = _monsterZone[zoneId] as Card_Monster;
-        return monster.CanAttack();
+        card.NormalSummon();
+        card.ChangeZone(ZoneType.Monster, zoneId);
     }
 
     public List<CardBase> GetAttackTarget() {
@@ -121,57 +115,20 @@ public class Player {
             }
         }
 
+        if (targets.Count == 0) {
+            // 没有攻击目标，则攻击玩家
+            CardBase player = new Card_Monster();
+            player.ChangeZone(ZoneType.Monster, GameDefines.PLAYER_ZONE);
+            targets.Add(player);
+        }
+
         return targets;
     }
 
-    public void Attack(int self, Player opponent, int target) {
-        Card_Monster selfMonster = _monsterZone[self] as Card_Monster;
-        if (target == GameDefines.PLAYER_ZONE) {
-            Log("直接攻击玩家");
-            opponent.TakeDamage(selfMonster.Atk);
-            selfMonster.AfterAttack();
-            return;
-        }
-
-        Card_Monster opponentMonster = opponent._monsterZone[target] as Card_Monster;
-        Log($"{selfMonster.Name}攻击 player{opponent.ID}的{opponentMonster.Name}");
-        if (opponentMonster.Position == MonterPosition.Attack) {
-            int atk1 = selfMonster.Atk, atk2 = opponentMonster.Atk;
-            Log($"{selfMonster.Name} 攻击力: {atk1}, player{opponent.ID}: {opponentMonster.Name} 攻击力：{atk2}");
-            if (atk1 > atk2) {
-                opponent.DestroyCard(ZoneType.Monster, target);
-                opponent.TakeDamage(atk1 - atk2);
-            }
-            else if (atk2 > atk1) {
-                DestroyCard(ZoneType.Monster, self);
-                TakeDamage(atk2 - atk1);
-            }
-            else {
-                DestroyCard(ZoneType.Monster, self);
-                opponent.DestroyCard(ZoneType.Monster, target);
-            }
-        }
-        else {
-            int atk = selfMonster.Atk, def = opponentMonster.Def;
-            Log($"{selfMonster.Name} 攻击力：{atk}, {opponentMonster.Name} 防御力：{atk}");
-            if (atk > def) {
-                opponent.DestroyCard(ZoneType.Monster, target);
-            }
-            else if (def > atk) {
-                TakeDamage(def - atk);
-            }
-        }
-        selfMonster.AfterAttack();
-    }
-
-    public void DestroyCard(ZoneType from, int idx) {
-        List<CardBase> fromzone = _zone[from];
-        CardBase card = fromzone[idx];
-        fromzone[idx] = null;
-        card.ChangeZone(ZoneType.GY, _GY.Count);
+    public void DestroyCard(CardBase card) {
+        _zone[card.ZoneType][card.ZoneId] = null;
         _GY.Add(card);
-
-        Log($"卡牌{card.Name}被破坏");
+        card.ChangeZone(ZoneType.GY, _GY.Count - 1);
     }
 
 

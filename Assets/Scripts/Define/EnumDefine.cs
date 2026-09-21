@@ -13,9 +13,9 @@ public enum CardFace {
 public enum ZoneType {
     Deck,
     Hand,
-    GY,
+    SpellTrap,
     Monster,
-    SpellTrap
+    GY,
 }
 
 public enum Phase

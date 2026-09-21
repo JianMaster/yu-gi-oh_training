@@ -52,7 +52,7 @@ public class InteractionController {
     bool TryGetSelectZone(InputData inputData, ref ZoneType zone) {
         if (inputData[InputType.Up] || inputData[InputType.Down]) {
             zone += inputData[InputType.Up] ? 1 : -1;
-            zone = (ZoneType)Mathf.Clamp((int)zone, 1, Enum.GetValues(typeof(ZoneType)).Length);
+            zone = (ZoneType)Mathf.Clamp((int)zone, 1, Enum.GetValues(typeof(ZoneType)).Length - 1);
             return true;
         }
         return false;
@@ -78,6 +78,9 @@ public class InteractionController {
         }
         else if (_curState == SelectState.Zone) {
             return SelectZone(inputData, _context);
+        }
+        else if (_curState == SelectState.Target) {
+            return SelectTarget(inputData, _context);
         }
 
         return _defaultCommand;
@@ -126,16 +129,15 @@ public class InteractionController {
 
         if (inputData[InputType.Confirm] && _selectCommandId != DEFALUT_ID) {
             CommandType commandType = context.commands[_selectCommandId];
+            context.selectedCommand = commandType;
             if (commandType == CommandType.NormalSummon) {
                 _curState = SelectState.Zone;
-                context.selectedCommand = CommandType.NormalSummon;
                 context.monsterZoneId = context.player.GetAvailableMonsterZone();
                 // 通常召唤
                 Debug.Log(TextData.Instance.GetText(Text_ID.SelectCommand_2));
             }
             else if (commandType == CommandType.Attack) {
                 _curState = SelectState.Target;
-                context.selectedCommand = CommandType.Attack;
                 context.targets = context.opponent.GetAttackTarget();
                 foreach (var card in context.targets) {
                     Debug.Log(TextData.Instance.GetFormatText(Text_ID.GetAttackTarget, card.ZoneId, card.Name));
@@ -152,22 +154,33 @@ public class InteractionController {
         if (TryGetSelect(inputData, ref _selectTargetId, context.targets.Count)) {
             Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.targets[_selectTargetId].Name));
         }
+        if (inputData[InputType.Confirm] && _selectTargetId != DEFALUT_ID) {
+            Command command = CommandFactory.CreateAttack(
+                context.player,
+                context.opponent,
+                context.selectedCard,
+                context.targets[_selectTargetId],
+                context.targets[_selectTargetId].ZoneId == GameDefines.PLAYER_ZONE
+            );
+            Debug.Log($"执行指令: {command.Type}");
+            ResetState(ref context);
+            return command;
+        }
         return _defaultCommand;
     }
 
     int _selectZoneId = DEFALUT_ID;
     Command SelectZone(InputData inputData, InteractionContext context) {
         if (TryGetSelect(inputData, ref _selectZoneId, context.monsterZoneId.Count)) {
-            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1,context.monsterZoneId[_selectZoneId]));
+            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.monsterZoneId[_selectZoneId]));
         }
 
         if (inputData[InputType.Confirm] && _selectZoneId != DEFALUT_ID) {
-            Command command = new() {
-                Type = context.selectedCommand,
-                Excuter = context.player,
-                TargetCard = context.selectedCard,
-                TargetZoneId = context.monsterZoneId[_selectZoneId]
-            };
+            Command command = CommandFactory.CreateNormalSummon(
+                context.player,
+                context.selectedCard,
+                context.monsterZoneId[_selectZoneId]
+            );
             Debug.Log($"执行指令: {command.Type}");
             ResetState(ref context);
             return command;
@@ -198,12 +211,7 @@ public class InteractionController {
                     list.Add(CommandType.MonsterSet);
                 }
             }
-        }
-        else if (_state.CurPhase == Phase.Battle) {
-            if (card.ZoneType == ZoneType.Monster) {
-                if (card.CanAttack()) {
-                    list.Add(CommandType.Attack);
-                }
+            else if (card.ZoneType == ZoneType.Monster) {
                 if (card.CanChangePosition()) {
                     if (card.Face == CardFace.FaceUp) {
                         list.Add(CommandType.ChangePosition);
@@ -211,6 +219,13 @@ public class InteractionController {
                     else {
                         list.Add(CommandType.MonsetFilp);
                     }
+                }
+            }
+        }
+        else if (_state.CurPhase == Phase.Battle) {
+            if (card.ZoneType == ZoneType.Monster) {
+                if (card.CanAttack()) {
+                    list.Add(CommandType.Attack);
                 }
             }
         }
