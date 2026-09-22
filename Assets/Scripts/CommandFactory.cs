@@ -17,12 +17,12 @@ public static class CommandFactory {
         return command;
     }
 
-    public static Command CreateAttack(Player player, Player opponent, CardBase attackCard, CardBase targetCard, bool isDirectAttack) {
+    public static Command CreateAttack(Player player, Player opponent, Card_Monster attackMonster, Card_Monster targetMonster, bool isDirectAttack) {
         Command command = new Command_Attack() {
             Excuter = player,
             Opponent = opponent,
-            AttackCard = attackCard,
-            TargetCard = targetCard,
+            AttackMonster = attackMonster,
+            TargetMonster = targetMonster,
             IsDirectAttack = isDirectAttack,
         };
         return command;

@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class Main : MonoBehaviour {
     GameController _game;
     GameState _state;
+    EventSystem _event;
     InteractionController _interaction;
     [SerializeField] InputManager _inputManager;
     [SerializeField] bool player1_first;
@@ -14,7 +15,8 @@ public class Main : MonoBehaviour {
     void Start() {
         _state = new(player1_first, data1, data2);
         _interaction = new(_state);
-        _game = new(_state);
+        _event = new();
+        _game = new(_state, _event);
         
         _state.OnNextTurn += _interaction.ChangePlayer;
 

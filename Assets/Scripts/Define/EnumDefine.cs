@@ -70,3 +70,8 @@ public enum MonterPosition {
     Attack,
     Defense
 }
+
+public enum DamageType {
+    Battle,
+    Effect,
+}

@@ -5,8 +5,10 @@ using UnityEngine.UI;
 
 public class GameController {
     GameState _gameState;
-    public GameController(GameState state) {
+    EventSystem _eventSystem;
+    public GameController(GameState state, EventSystem eventSystem) {
         _gameState = state;
+        _eventSystem = eventSystem;
     }
 
     public void GameStart() {
@@ -58,48 +60,85 @@ public class GameController {
     void Attack(Command_Attack command) {
         var attacker = command.Excuter;
         var opponent = command.Opponent;
-        var selfMonster = command.AttackCard as Card_Monster;
-        var opponentMonster = command.TargetCard as Card_Monster;
+        var attackMonster = command.AttackMonster;
+        var targetMonster = command.TargetMonster;
+        AttackContext context = new() {
+            attacker = attacker,
+            opponent = opponent,
+            attackMonster = attackMonster,
+            targetMonster = targetMonster,
+            isDirectAttack = command.IsDirectAttack,
+        };
         if (command.IsDirectAttack) {
             Debug.Log(TextData.Instance.GetText(Text_ID.DirectAttack));
-            selfMonster.BeforeAttack();
-            opponent.TakeDamage(selfMonster.Atk);
-            selfMonster.AfterAttack();
+            BeforeAttack(context);
+            context.damage = attackMonster.Atk;
+            context.getDamagePlayer = opponent;
+            TakeDamageByAttack(context);
+            AfterAttack(context);
             return;
         }
 
-        Debug.Log(TextData.Instance.GetFormatText(Text_ID.Attack_1, attacker.ID, selfMonster.Name, opponent.ID, opponentMonster.Name));
-        selfMonster.BeforeAttack();
-        if (opponentMonster.Position == MonterPosition.Attack) {
-            int atk1 = selfMonster.Atk, atk2 = opponentMonster.Atk;
-            Debug.Log(TextData.Instance.GetFormatText(Text_ID.Attack_2, selfMonster.Name, atk1, opponentMonster.Name, atk2));
+        Debug.Log(TextData.Instance.GetFormatText(Text_ID.Attack_1, attacker.ID, attackMonster.Name, opponent.ID, targetMonster.Name));
+        BeforeAttack(context);
+        if (targetMonster.Position == MonterPosition.Attack) {
+            int atk1 = attackMonster.Atk, atk2 = targetMonster.Atk;
+            Debug.Log(TextData.Instance.GetFormatText(Text_ID.Attack_2, attackMonster.Name, atk1, targetMonster.Name, atk2));
             if (atk1 > atk2) {
-                DestroyCard(opponent, opponentMonster);
-                opponent.TakeDamage(atk1 - atk2);
+                DestroyCard(opponent, targetMonster);
+                context.damage = atk1 - atk2;
+                context.getDamagePlayer = opponent;
+                TakeDamageByAttack(context);
             }
             else if (atk2 > atk1) {
-                DestroyCard(attacker, selfMonster);
-                attacker.TakeDamage(atk2 - atk1);
+                DestroyCard(attacker, attackMonster);
+                context.damage = atk2 - atk1;
+                context.getDamagePlayer = attacker;
+                TakeDamageByAttack(context);
             }
             else {
-                DestroyCard(attacker, selfMonster);
-                DestroyCard(opponent, opponentMonster);
+                DestroyCard(attacker, attackMonster);
+                DestroyCard(opponent, targetMonster);
             }
         }
         else {
-            int atk = selfMonster.Atk, def = opponentMonster.Def;
-            Debug.Log(TextData.Instance.GetFormatText(Text_ID.Attack_3, selfMonster.Name, atk, opponentMonster.Name, def));
+            int atk = attackMonster.Atk, def = targetMonster.Def;
+            Debug.Log(TextData.Instance.GetFormatText(Text_ID.Attack_3, attackMonster.Name, atk, targetMonster.Name, def));
             if (atk > def) {
-                DestroyCard(opponent, opponentMonster);
+                DestroyCard(opponent, targetMonster);
             }
             else if (def > atk) {
                 attacker.TakeDamage(def - atk);
+                context.damage = def - atk;
+                context.getDamagePlayer = attacker;
+                TakeDamageByAttack(context);
             }
         }
-        selfMonster.AfterAttack();
+        AfterAttack(context);
     }
 
-    public void DestroyCard(Player player, CardBase card) {
+    void BeforeAttack(AttackContext context) {
+        context.attackMonster.BeforeAttack();
+    }
+
+    void TakeDamageByAttack(AttackContext context) {
+        context.getDamagePlayer.TakeDamage(context.damage);
+        bool attackSuccess = context.getDamagePlayer == context.opponent;
+        var info = new DamageEvent(){
+            type = DamageType.Battle,
+            source = attackSuccess ? context.attacker : context.opponent,
+            target = attackSuccess ? context.opponent : context.attacker,
+            sourceCard = attackSuccess ? context.attackMonster : context.targetMonster,
+            damage = context.damage
+        };
+        _eventSystem.Trigger(info);
+    }
+
+    void AfterAttack(AttackContext context) {
+        context.attackMonster.AfterAttack();
+    }
+
+    void DestroyCard(Player player, CardBase card) {
         if (player.ID != card.Belong) {
             Debug.LogError("卡牌不属于该玩家");
             return;

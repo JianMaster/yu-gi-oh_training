@@ -17,8 +17,8 @@ public class Command_NormalSummon : Command {
 
 public class Command_Attack : Command {
     public Player Opponent { get; set; }
-    public CardBase AttackCard { get; set; }
-    public CardBase TargetCard { get; set; }
+    public Card_Monster AttackMonster { get; set; }
+    public Card_Monster TargetMonster { get; set; }
     public bool IsDirectAttack { get; set; }
     public Command_Attack() : base(CommandType.Attack) {}
 }

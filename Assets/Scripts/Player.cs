@@ -83,7 +83,7 @@ public class Player {
         }
     }
 
-    public List<CardBase> GetZoneCards(ZoneType zoneType) {
+    public IReadOnlyList<CardBase> GetZoneCards(ZoneType zoneType) {
         return _zone[zoneType];
     }
 

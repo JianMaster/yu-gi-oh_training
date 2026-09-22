@@ -158,8 +158,8 @@ public class InteractionController {
             Command command = CommandFactory.CreateAttack(
                 context.player,
                 context.opponent,
-                context.selectedCard,
-                context.targets[_selectTargetId],
+                context.selectedCard as Card_Monster,
+                context.targets[_selectTargetId] as Card_Monster,
                 context.targets[_selectTargetId].ZoneId == GameDefines.PLAYER_ZONE
             );
             Debug.Log($"执行指令: {command.Type}");
