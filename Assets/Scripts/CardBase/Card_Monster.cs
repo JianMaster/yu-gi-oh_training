@@ -11,7 +11,7 @@ public class Card_Monster : CardBase {
     int _attackCount;
     int _changePositionCount;
 
-    public Card_Monster() : base() {
+    public Card_Monster(CardData data, Player player) : base(data, player) {
         CardType = CardType.Monster;
         TurnStart();
     }

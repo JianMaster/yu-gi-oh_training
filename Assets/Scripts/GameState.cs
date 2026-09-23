@@ -11,7 +11,6 @@ public class GameState {
     public Player TurnOwner => (Turn + (_first ? 0 : 1)) % 2 == 1 ? _player1 : _player2;
     public Player Opponent => TurnOwner == _player1 ? _player2 : _player1;
 
-    public event Action<string> ShowInfo;
     public event Action<Phase> OnNextPhase;
     public event Action<Player> OnNextTurn;
 

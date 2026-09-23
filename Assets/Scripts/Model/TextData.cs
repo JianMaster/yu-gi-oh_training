@@ -15,6 +15,8 @@ public partial class TextData {
             {Text_ID.Attack_2, "{0} 攻击力: {1}, {2} 攻击力：{3}"},
             {Text_ID.Attack_3, "{0} 攻击力：{1}, {2} 防御力：{3}"},
             {Text_ID.Destroy, "player{0} 卡牌{1}被破坏"},
+            {Text_ID.ActivateEffect, "发动{0}的效果，效果编号{1}"},
+
         };
     }
 }

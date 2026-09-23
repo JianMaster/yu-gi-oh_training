@@ -30,10 +30,9 @@ public class Player {
         _data = data;
         string[] cardIds = data.Deck.Split(' ');
         foreach (var cardId in cardIds) {
-            CardBase card = CardFactory.CreateInstance(cardId);
+            CardBase card = CardFactory.CreateInstance(cardId, this);
             if (card != null) {
                 _deck.Add(card);
-                card.Belong = ID;
                 card.ChangeZone(ZoneType.Deck, _deck.Count - 1);
             }
         }
@@ -58,6 +57,11 @@ public class Player {
         if (LifePoint <= 0) {
             Log($"游戏结束");
         }
+    }
+
+    public void Heal(int heal) {
+        LifePoint += heal;
+        Log($"恢复伤害：{heal}, 生命值剩余{LifePoint}");
     }
 
     public void Draw(int count) {
@@ -117,7 +121,7 @@ public class Player {
 
         if (targets.Count == 0) {
             // 没有攻击目标，则攻击玩家
-            CardBase player = new Card_Monster();
+            CardBase player = new Card_Monster(new CardData(), this);
             player.ChangeZone(ZoneType.Monster, GameDefines.PLAYER_ZONE);
             targets.Add(player);
         }

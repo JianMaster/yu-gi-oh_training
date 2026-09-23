@@ -47,13 +47,13 @@ public enum CommandType {
     Attack,
     ChangePosition,
     SpellTrapSet,
-    SpellTrapActivate,
+    Activate,
     NextPhase,
 }
 
 public enum EffectType {
-    NormalSummon,
-    SpecialSummon,
+    Healing,
+    Damage,
 }
 
 public enum MonsterAttribute {

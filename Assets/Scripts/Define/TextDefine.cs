@@ -11,4 +11,5 @@ public enum Text_ID {
     Attack_2,
     Attack_3,
     Destroy,
+    ActivateEffect,
 }
