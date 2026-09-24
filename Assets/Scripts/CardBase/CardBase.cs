@@ -1,6 +1,7 @@
 
 public abstract class CardBase {
-    CardData _data;
+    protected CardData _data;
+    protected IEffect _effect;
     public Player Belong { get; protected set; }
     public ZoneType ZoneType { get; protected set; }
     public int ZoneId { get; protected set; }
@@ -11,6 +12,7 @@ public abstract class CardBase {
 
     public CardBase(CardData data, Player belong) {
         _data = data;
+        _effect = EffectFactory.CreateInstance(data);
         Belong = belong;
         ID = data.id;
         Name = data.name;
@@ -21,7 +23,13 @@ public abstract class CardBase {
         ZoneType = zoneType;
         ZoneId = zoneId;
     }
-    public abstract void TurnStart();
-    public abstract string ShowInfo();
+    public virtual bool CanActivate() {
+        return _effect is not Effect_None;
+    }
+    public virtual void Activate() { }
+    public virtual void TurnStart() { }
+    public virtual string ShowInfo() {
+        return Name;
+    }
 
 }

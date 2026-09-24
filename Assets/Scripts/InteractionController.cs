@@ -104,18 +104,18 @@ public class InteractionController {
                 Debug.Log("当前无可操作卡");
                 return _defaultCommand;
             }
-            if (list[_selectCardId] is Card_Monster card) {
-                List<CommandType> commands = GetMonsterUsableCommand(context.player, card);
-                if (commands.Count != 0) {
-                    context.selectedCard = list[_selectCardId];
-                    context.commands = commands;
-                    _curState = SelectState.Command;
-                    Debug.Log($"进入指令选择，当前可用指令: {string.Join(" ", commands)}");
-                }
-                else {
-                    Debug.Log("当前无可操作选项");
-                }
+            var card = list[_selectCardId];
+            var commands = GetUsableCommand(context.player, card);
+            if (commands.Count != 0) {
+                context.selectedCard = list[_selectCardId];
+                context.commands = commands;
+                _curState = SelectState.Command;
+                Debug.Log($"进入指令选择，当前可用指令: {string.Join(" ", commands)}");
             }
+            else {
+                Debug.Log("当前无可操作选项");
+            }
+
         }
         return _defaultCommand;
     }
@@ -202,9 +202,10 @@ public class InteractionController {
         Debug.Log("重置状态");
     }
 
-    public List<CommandType> GetMonsterUsableCommand(Player player, Card_Monster card) {
+    public List<CommandType> GetUsableCommand(Player player, CardBase card) {
         List<CommandType> list = new();
         if (_state.CurPhase == Phase.Main1) {
+            if(card.)
             if (card.ZoneType == ZoneType.Hand) {
                 if (player.CanNormalSummon && player.GetAvailableMonsterZone().Count != 0) {
                     list.Add(CommandType.NormalSummon);
@@ -223,9 +224,11 @@ public class InteractionController {
             }
         }
         else if (_state.CurPhase == Phase.Battle) {
-            if (card.ZoneType == ZoneType.Monster) {
-                if (card.CanAttack()) {
-                    list.Add(CommandType.Attack);
+            if (card is Card_Monster monster) {
+                if (card.ZoneType == ZoneType.Monster) {
+                    if (monster.CanAttack()) {
+                        list.Add(CommandType.Attack);
+                    }
                 }
             }
         }

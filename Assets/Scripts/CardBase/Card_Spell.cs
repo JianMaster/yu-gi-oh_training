@@ -1,8 +1,10 @@
 public class Card_Spell : CardBase {
-    IEffect _effect;
     public Card_Spell(CardData data, Player player) : base(data, player) {
-        _effect = EffectFactory.CreateInstance(data);
         TurnStart();
+    }
+
+    public bool CanActivate() {
+        return true;
     }
 
     public void Activate() {

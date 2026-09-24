@@ -20,5 +20,11 @@ public class Command_Attack : Command {
     public Card_Monster AttackMonster { get; set; }
     public Card_Monster TargetMonster { get; set; }
     public bool IsDirectAttack { get; set; }
-    public Command_Attack() : base(CommandType.Attack) {}
+    public Command_Attack() : base(CommandType.Attack) { }
+}
+
+public class Command_Activate : Command {
+    public CardBase TargetCard { get; set; }
+    public int TargetZoneId { get; set; }
+    public Command_Activate() : base(CommandType.Activate) { }
 }

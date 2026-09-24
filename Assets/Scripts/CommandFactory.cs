@@ -27,4 +27,13 @@ public static class CommandFactory {
         };
         return command;
     }
+
+    public static Command CreateActivate(Player player, CardBase targetCard, int targetZoneId) {
+        Command command = new Command_Activate() {
+            Excuter = player,
+            TargetCard = targetCard,
+            TargetZoneId = targetZoneId,
+        };
+        return command;
+    }
 }
