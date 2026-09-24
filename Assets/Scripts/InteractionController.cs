@@ -205,7 +205,7 @@ public class InteractionController {
     public List<CommandType> GetUsableCommand(Player player, CardBase card) {
         List<CommandType> list = new();
         if (_state.CurPhase == Phase.Main1) {
-            if(card.)
+            
             if (card.ZoneType == ZoneType.Hand) {
                 if (player.CanNormalSummon && player.GetAvailableMonsterZone().Count != 0) {
                     list.Add(CommandType.NormalSummon);

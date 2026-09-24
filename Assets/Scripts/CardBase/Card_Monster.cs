@@ -12,8 +12,7 @@ public class Card_Monster : CardBase {
     int _changePositionCount;
 
     public Card_Monster(CardData data, Player player) : base(data, player) {
-        CardType = CardType.Monster;
-        TurnStart();
+
     }
 
     public void NormalSummon() {
@@ -51,6 +50,17 @@ public class Card_Monster : CardBase {
 
     public void AfterAttack() {
         _attackCount--;
+    }
+
+    public override List<CommandType> GetAction() {
+        return new() {
+            CommandType.NormalSummon,
+            CommandType.SpecialSummon,
+            CommandType.Activate,
+            CommandType.ChangePosition,
+            CommandType.MonsterSet,
+            CommandType.Attack,
+        };
     }
 
     public override void TurnStart() {

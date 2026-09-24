@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 public abstract class CardBase {
     protected CardData _data;
     protected IEffect _effect;
@@ -17,11 +19,15 @@ public abstract class CardBase {
         ID = data.id;
         Name = data.name;
         CardType = data.cardType;
+        TurnStart();
     }
 
     public void ChangeZone(ZoneType zoneType, int zoneId) {
         ZoneType = zoneType;
         ZoneId = zoneId;
+    }
+    public virtual List<CommandType> GetAction() {
+        return new();
     }
     public virtual bool CanActivate() {
         return _effect is not Effect_None;

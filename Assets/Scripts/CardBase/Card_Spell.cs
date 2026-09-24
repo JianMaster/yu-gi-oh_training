@@ -1,20 +1,29 @@
+using System.Collections.Generic;
+
 public class Card_Spell : CardBase {
     public Card_Spell(CardData data, Player player) : base(data, player) {
-        TurnStart();
+
     }
 
-    public bool CanActivate() {
+    public override List<CommandType> GetAction() {
+        return new() {
+            CommandType.Activate,
+            CommandType.SpellTrapSet,
+        };
+    }
+
+    public override bool CanActivate() {
         return true;
     }
 
-    public void Activate() {
+    public override void Activate() {
         EffectContext context = new();
 
         _effect.Resolve(context);
     }
 
     public override void TurnStart() {
-        
+
     }
 
     public override string ShowInfo() {
