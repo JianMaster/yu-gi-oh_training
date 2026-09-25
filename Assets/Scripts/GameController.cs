@@ -139,7 +139,7 @@ public class GameController {
     }
 
     void DestroyCard(Player player, CardBase card) {
-        if (player != card.Belong) {
+        if (player != card.Owner) {
             Debug.LogError("卡牌不属于该玩家");
             return;
         }

@@ -1,4 +1,4 @@
 public struct ActionContext {
+    public GameState state;
     public Player player;
-    public CardBase card;
 }

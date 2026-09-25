@@ -14,9 +14,7 @@ public class Player {
     List<CardBase> _monsterZone = new() { null, null, null, null, null };
     List<CardBase> _spellTrapZone = new() { null, null, null, null, null };
 
-    int _normalSummonCount;
-    public bool CanNormalSummon => _normalSummonCount > 0;
-
+    public int NormalSummonCount { get; private set; }
 
     public Player(int id, PlayerData data) {
         _zone = new() {
@@ -42,7 +40,7 @@ public class Player {
 
 
     public void TurnStart() {
-        _normalSummonCount = GameDefines.SUMMON_NORMAL_COUNT;
+        NormalSummonCount = 0;
         _hand.ForEach(card => card.TurnStart());
         _GY.ForEach(card => card.TurnStart());
         _monsterZone.ForEach(card => card?.TurnStart());
@@ -104,7 +102,7 @@ public class Player {
 
     public void NormalSummon(Card_Monster card, int zoneId) {
         Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.NormalSummon), ID, card.Name, zoneId));
-        _normalSummonCount--;
+        NormalSummonCount--;
         _monsterZone[zoneId] = _hand[card.ZoneId];
         _hand.RemoveAt(card.ZoneId);
         card.NormalSummon();

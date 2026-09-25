@@ -8,11 +8,18 @@ public class Card_Monster : CardBase {
     public int Atk { get; protected set; }
     public int Def { get; protected set; }
 
-    int _attackCount;
-    int _changePositionCount;
+    public int AttackCount { get;private set; }
+    public int ChangePositionCount { get; private set; }
 
     public Card_Monster(CardData data, Player player) : base(data, player) {
-
+        _defaultActions = new() {
+            ActionType.NormalSummon,
+            ActionType.SpecialSummon,
+            ActionType.Activate,
+            ActionType.ChangePosition,
+            ActionType.MonsterSet,
+            ActionType.Attack,
+        };
     }
 
     public void NormalSummon() {
@@ -34,38 +41,28 @@ public class Card_Monster : CardBase {
         Face = CardFace.FaceUp;
     }
 
-    public bool CanChangePosition() {
-        return _changePositionCount > 0;
-    }
     public void ChangePosition() {
-        _changePositionCount--;
+        ChangePositionCount--;
         Position = Position == MonterPosition.Attack ? MonterPosition.Defense : MonterPosition.Attack;
-    }
-
-    public bool CanAttack() {
-        return _attackCount > 0 && Position == MonterPosition.Attack;
     }
 
     public void BeforeAttack() { }
 
     public void AfterAttack() {
-        _attackCount--;
+        AttackCount--;
     }
 
     public override List<ActionType> GetAction() {
-        return new() {
-            ActionType.NormalSummon,
-            ActionType.SpecialSummon,
-            ActionType.Activate,
-            ActionType.ChangePosition,
-            ActionType.MonsterSet,
-            ActionType.Attack,
-        };
+        return _defaultActions;
+    }
+
+    public override void CheckAction(in List<ActionType> actions, ActionContext context) {
+        
     }
 
     public override void TurnStart() {
-        _attackCount = 1;
-        _changePositionCount = 1;
+        AttackCount = 0;
+        ChangePositionCount = 0;
     }
 
     public override string ShowInfo() {

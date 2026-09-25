@@ -2,14 +2,17 @@ using System.Collections.Generic;
 
 public class Card_Spell : CardBase {
     public Card_Spell(CardData data, Player player) : base(data, player) {
-
-    }
-
-    public override List<ActionType> GetAction() {
-        return new() {
+        _defaultActions = new() {
             ActionType.Activate,
             ActionType.SpellTrapSet,
         };
+    }
+
+    public override List<ActionType> GetAction() {
+        return _defaultActions;
+    }
+
+    public override void CheckAction(in List<ActionType> actions, ActionContext context) {
     }
 
     public override bool CanActivate() {

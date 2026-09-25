@@ -22,6 +22,7 @@ public class InteractionController {
 
     const int DEFALUT_ID = -1;
     GameState _state;
+    ActionQuery _actionQuery;
     SelectState _curState;
     InteractionContext _context;
 
@@ -29,6 +30,7 @@ public class InteractionController {
 
     public InteractionController(GameState state, ActionQuery query) {
         _state = state;
+        _actionQuery = query;
         _curState = SelectState.None;
         ChangePlayer(_state.TurnOwner);
     }
@@ -104,10 +106,14 @@ public class InteractionController {
                 Debug.Log("当前无可操作卡");
                 return _defaultAction;
             }
-            var card = list[_selectCardId];
-            var actions = GetUsableCommand(context.player, card);
+            var card = list[_selectCardId]; // 当前选择的卡牌
+            ActionContext actionContext = new() {
+                state = _state,
+                player = context.player,
+            };
+            var actions = _actionQuery.GetAvailableAction(card, actionContext);
             if (actions.Count != 0) {
-                context.selectedCard = list[_selectCardId];
+                context.selectedCard = card;
                 context.actions = actions;
                 _curState = SelectState.Action;
                 Debug.Log($"进入指令选择，当前可用指令: {string.Join(" ", actions)}");
@@ -200,39 +206,5 @@ public class InteractionController {
         context.monsterZoneId = null;
         context.targets = null;
         Debug.Log("重置状态");
-    }
-
-    public List<ActionType> GetUsableCommand(Player player, CardBase card) {
-        List<ActionType> list = new();
-        if (_state.CurPhase == Phase.Main1) {
-            
-            if (card.ZoneType == ZoneType.Hand) {
-                if (player.CanNormalSummon && player.GetAvailableMonsterZone().Count != 0) {
-                    list.Add(ActionType.NormalSummon);
-                    list.Add(ActionType.MonsterSet);
-                }
-            }
-            else if (card.ZoneType == ZoneType.Monster) {
-                if (card.CanChangePosition()) {
-                    if (card.Face == CardFace.FaceUp) {
-                        list.Add(ActionType.ChangePosition);
-                    }
-                    else {
-                        list.Add(ActionType.MonsetFilp);
-                    }
-                }
-            }
-        }
-        else if (_state.CurPhase == Phase.Battle) {
-            if (card is Card_Monster monster) {
-                if (card.ZoneType == ZoneType.Monster) {
-                    if (monster.CanAttack()) {
-                        list.Add(ActionType.Attack);
-                    }
-                }
-            }
-        }
-
-        return list;
     }
 }
