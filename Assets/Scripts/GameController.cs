@@ -17,11 +17,11 @@ public class GameController {
         Draw(_gameState.Opponent, GameDefines.START_CARD_COUNT);
     }
 
-    public void ExcuteCommand(Command command) {
-        if (command.Type == CommandType.None) {
+    public void ExcuteCommand(Action action) {
+        if (action.Type == ActionType.None) {
             return;
         }
-        if (command.Type == CommandType.NextPhase) {
+        if (action.Type == ActionType.NextPhase) {
             NextPhase();
             if (_gameState.CurPhase == Phase.Draw) {
                 var player = _gameState.TurnOwner;
@@ -37,11 +37,11 @@ public class GameController {
             return;
         }
 
-        if (command is Command_NormalSummon normalSummon) {
+        if (action is Action_NormalSummon normalSummon) {
             NormalSummon(normalSummon);
         }
 
-        if (command is Command_Attack attack) {
+        if (action is Action_Attack attack) {
             Attack(attack);
         }
     }
@@ -50,26 +50,26 @@ public class GameController {
         player.Draw(count);
     }
 
-    void NormalSummon(Command_NormalSummon command) {
-        var player = command.Excuter;
-        var card = command.TargetCard;
-        var zoneId = command.TargetZoneId;
+    void NormalSummon(Action_NormalSummon action) {
+        var player = action.Excuter;
+        var card = action.TargetCard;
+        var zoneId = action.TargetZoneId;
         player.NormalSummon(card as Card_Monster, zoneId);
     }
 
-    void Attack(Command_Attack command) {
-        var attacker = command.Excuter;
-        var opponent = command.Opponent;
-        var attackMonster = command.AttackMonster;
-        var targetMonster = command.TargetMonster;
+    void Attack(Action_Attack action) {
+        var attacker = action.Excuter;
+        var opponent = action.Opponent;
+        var attackMonster = action.AttackMonster;
+        var targetMonster = action.TargetMonster;
         AttackContext context = new() {
             attacker = attacker,
             opponent = opponent,
             attackMonster = attackMonster,
             targetMonster = targetMonster,
-            isDirectAttack = command.IsDirectAttack,
+            isDirectAttack = action.IsDirectAttack,
         };
-        if (command.IsDirectAttack) {
+        if (action.IsDirectAttack) {
             Debug.Log(TextData.Instance.GetText(Text_ID.DirectAttack));
             BeforeAttack(context);
             context.damage = attackMonster.Atk;

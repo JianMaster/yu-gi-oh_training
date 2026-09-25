@@ -1,30 +1,30 @@
 using UnityEngine;
 
-public class Command {
-    public CommandType Type { get; set; } = CommandType.None;
+public class Action {
+    public ActionType Type { get; set; } = ActionType.None;
     public Player Excuter { get; set; }
-    public Command() { }
-    public Command(CommandType type) {
+    public Action() { }
+    public Action(ActionType type) {
         Type = type;
     }
 }
 
-public class Command_NormalSummon : Command {
+public class Action_NormalSummon : Action {
     public CardBase TargetCard { get; set; }
     public int TargetZoneId { get; set; }
-    public Command_NormalSummon() : base(CommandType.NormalSummon) { }
+    public Action_NormalSummon() : base(ActionType.NormalSummon) { }
 }
 
-public class Command_Attack : Command {
+public class Action_Attack : Action {
     public Player Opponent { get; set; }
     public Card_Monster AttackMonster { get; set; }
     public Card_Monster TargetMonster { get; set; }
     public bool IsDirectAttack { get; set; }
-    public Command_Attack() : base(CommandType.Attack) { }
+    public Action_Attack() : base(ActionType.Attack) { }
 }
 
-public class Command_Activate : Command {
+public class Action_Activate : Action {
     public CardBase TargetCard { get; set; }
     public int TargetZoneId { get; set; }
-    public Command_Activate() : base(CommandType.Activate) { }
+    public Action_Activate() : base(ActionType.Activate) { }
 }

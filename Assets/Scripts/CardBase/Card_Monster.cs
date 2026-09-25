@@ -52,14 +52,14 @@ public class Card_Monster : CardBase {
         _attackCount--;
     }
 
-    public override List<CommandType> GetAction() {
+    public override List<ActionType> GetAction() {
         return new() {
-            CommandType.NormalSummon,
-            CommandType.SpecialSummon,
-            CommandType.Activate,
-            CommandType.ChangePosition,
-            CommandType.MonsterSet,
-            CommandType.Attack,
+            ActionType.NormalSummon,
+            ActionType.SpecialSummon,
+            ActionType.Activate,
+            ActionType.ChangePosition,
+            ActionType.MonsterSet,
+            ActionType.Attack,
         };
     }
 

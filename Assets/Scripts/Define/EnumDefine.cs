@@ -38,7 +38,7 @@ public enum InputType {
     NextPhase,
 }
 
-public enum CommandType {
+public enum ActionType {
     None,
     NormalSummon,
     SpecialSummon,

@@ -14,9 +14,12 @@ public class Main : MonoBehaviour {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
         _state = new(player1_first, data1, data2);
-        _interaction = new(_state);
+        GameRule rule = new(_state);
+        ActionQuery query  = new(rule);
+        _interaction = new(_state, query);
         _event = new();
         _game = new(_state, _event);
+
         
         _state.OnNextTurn += _interaction.ChangePlayer;
 
@@ -26,8 +29,8 @@ public class Main : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         _inputManager.GetInput(ref _inputData);
-        Command command = _interaction.GetCommand(_inputData);
-        _game.ExcuteCommand(command);
+        Action action = _interaction.GetAction(_inputData);
+        _game.ExcuteCommand(action);
 
     }
 

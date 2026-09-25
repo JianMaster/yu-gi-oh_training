@@ -1,39 +1,39 @@
 public static class CommandFactory {
-    public static Command CreateNone() {
-        return new Command();
+    public static Action CreateNone() {
+        return new Action();
     }
-    public static Command CreateNextPhase(Player player) {
-        return new Command() {
-            Type = CommandType.NextPhase,
+    public static Action CreateNextPhase(Player player) {
+        return new Action() {
+            Type = ActionType.NextPhase,
             Excuter = player,
         };
     }
-    public static Command CreateNormalSummon(Player player, CardBase card, int zoneId) {
-        Command command = new Command_NormalSummon() {
+    public static Action CreateNormalSummon(Player player, CardBase card, int zoneId) {
+        Action action = new Action_NormalSummon() {
             Excuter = player,
             TargetCard = card,
             TargetZoneId = zoneId,
         };
-        return command;
+        return action;
     }
 
-    public static Command CreateAttack(Player player, Player opponent, Card_Monster attackMonster, Card_Monster targetMonster, bool isDirectAttack) {
-        Command command = new Command_Attack() {
+    public static Action CreateAttack(Player player, Player opponent, Card_Monster attackMonster, Card_Monster targetMonster, bool isDirectAttack) {
+        Action action = new Action_Attack() {
             Excuter = player,
             Opponent = opponent,
             AttackMonster = attackMonster,
             TargetMonster = targetMonster,
             IsDirectAttack = isDirectAttack,
         };
-        return command;
+        return action;
     }
 
-    public static Command CreateActivate(Player player, CardBase targetCard, int targetZoneId) {
-        Command command = new Command_Activate() {
+    public static Action CreateActivate(Player player, CardBase targetCard, int targetZoneId) {
+        Action action = new Action_Activate() {
             Excuter = player,
             TargetCard = targetCard,
             TargetZoneId = targetZoneId,
         };
-        return command;
+        return action;
     }
 }

@@ -5,10 +5,10 @@ public class Card_Spell : CardBase {
 
     }
 
-    public override List<CommandType> GetAction() {
+    public override List<ActionType> GetAction() {
         return new() {
-            CommandType.Activate,
-            CommandType.SpellTrapSet,
+            ActionType.Activate,
+            ActionType.SpellTrapSet,
         };
     }
 

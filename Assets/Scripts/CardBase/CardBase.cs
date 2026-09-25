@@ -26,7 +26,7 @@ public abstract class CardBase {
         ZoneType = zoneType;
         ZoneId = zoneId;
     }
-    public virtual List<CommandType> GetAction() {
+    public virtual List<ActionType> GetAction() {
         return new();
     }
     public virtual bool CanActivate() {
