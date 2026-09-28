@@ -16,7 +16,7 @@ public class InteractionController {
         public CardBase selectedCard = null;
         public List<ActionType> actions = null;
         public ActionType selectedAction = ActionType.None;
-        public List<int> monsterZoneId = null;
+        public List<int> zoneIds = null;
         public List<CardBase> targets = null;
     }
 
@@ -134,20 +134,25 @@ public class InteractionController {
         }
 
         if (inputData[InputType.Confirm] && _selectActionId != DEFALUT_ID) {
-            ActionType commandType = context.actions[_selectActionId];
-            context.selectedAction = commandType;
-            if (commandType == ActionType.NormalSummon) {
+            ActionType actionType = context.actions[_selectActionId];
+            context.selectedAction = actionType;
+            if (actionType == ActionType.NormalSummon) {
                 _curState = SelectState.Zone;
-                context.monsterZoneId = context.player.GetAvailableMonsterZone();
+                context.zoneIds = context.player.GetAvailableZone(ZoneType.Monster);
                 // 通常召唤
                 Debug.Log(TextData.Instance.GetText(Text_ID.SelectCommand_2));
             }
-            else if (commandType == ActionType.Attack) {
+            else if (actionType == ActionType.Attack) {
                 _curState = SelectState.Target;
                 context.targets = context.opponent.GetAttackTarget();
                 foreach (var card in context.targets) {
                     Debug.Log(TextData.Instance.GetFormatText(Text_ID.GetAttackTarget, card.ZoneId, card.Name));
                 }
+            }
+            else if(actionType == ActionType.Activate) {
+                _curState = SelectState.Zone;
+                context.zoneIds = context.player.GetAvailableZone(ZoneType.SpellTrap);
+                Debug.Log(TextData.Instance.GetText(Text_ID.SelectCommand_3));
             }
         }
 
@@ -177,15 +182,15 @@ public class InteractionController {
 
     int _selectZoneId = DEFALUT_ID;
     Action SelectZone(InputData inputData, InteractionContext context) {
-        if (TryGetSelect(inputData, ref _selectZoneId, context.monsterZoneId.Count)) {
-            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.monsterZoneId[_selectZoneId]));
+        if (TryGetSelect(inputData, ref _selectZoneId, context.zoneIds.Count)) {
+            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.zoneIds[_selectZoneId]));
         }
 
         if (inputData[InputType.Confirm] && _selectZoneId != DEFALUT_ID) {
             Action action = CommandFactory.CreateNormalSummon(
                 context.player,
                 context.selectedCard,
-                context.monsterZoneId[_selectZoneId]
+                context.zoneIds[_selectZoneId]
             );
             Debug.Log($"执行指令: {action.Type}");
             ResetState(ref context);
@@ -203,7 +208,7 @@ public class InteractionController {
         context.selectedCard = null;
         context.actions = null;
         context.selectedAction = ActionType.None;
-        context.monsterZoneId = null;
+        context.zoneIds = null;
         context.targets = null;
         Debug.Log("重置状态");
     }

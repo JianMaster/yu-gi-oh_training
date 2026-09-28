@@ -12,10 +12,7 @@ public class Card_Spell : CardBase {
         return _defaultActions;
     }
 
-    public override void CheckAction(in List<ActionType> actions, ActionContext context) {
-    }
-
-    public override bool CanActivate() {
+    public override bool CanActivate(ActionType action, ActionContext context) {
         return true;
     }
 

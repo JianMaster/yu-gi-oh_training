@@ -31,9 +31,8 @@ public abstract class CardBase {
     public virtual List<ActionType> GetAction() {
         return new();
     }
-    public virtual void CheckAction(in List<ActionType> actions, ActionContext context) { }
-    public virtual bool CanActivate() {
-        return _effect is not Effect_None;
+    public virtual bool CanActivate(ActionType action, ActionContext context) {
+        return _effect.CheckCanActive(action, context);
     }
     public virtual void Activate() { }
     public virtual void TurnStart() { }

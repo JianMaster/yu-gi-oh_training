@@ -5,6 +5,7 @@ public enum Text_ID {
     Battle_1,
     SelectCommand_1,
     SelectCommand_2,
+    SelectCommand_3,
     GetAttackTarget,
     DirectAttack,
     Attack_1,

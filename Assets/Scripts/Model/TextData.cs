@@ -9,6 +9,7 @@ public partial class TextData {
             {Text_ID.Battle_1, "战斗1"},
             {Text_ID.SelectCommand_1, "当前选择对象: {0}"},
             {Text_ID.SelectCommand_2, "选择召唤区域"},
+            {Text_ID.SelectCommand_3, "选择放置区域"},
             {Text_ID.GetAttackTarget, "当前可攻击对象id:{0}, name:{1}"},
             {Text_ID.DirectAttack, "直接攻击玩家"},
             {Text_ID.Attack_1, "player{0} {1} 攻击 player{2}的{3}"},

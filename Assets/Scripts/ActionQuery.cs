@@ -9,14 +9,15 @@ public class ActionQuery {
         var avalSet = card.GetAction();
         List<ActionType> list = new();
         foreach (var action in avalSet) {
-            bool available = _rule.CheckAction(action, card, context);
-            if (action == ActionType.Activate && card.HasEffect) {
-                available = available && card.CanActivate();
+            bool rulePass = _rule.CheckAction(action, card, context);
+            bool effectPass = true;
+            if (card.HasEffect) {
+                effectPass = card.CanActivate(action, context);
             }
-            if (available) {
+            if (effectPass && rulePass) {
                 list.Add(action);
             }
         }
-        return avalSet;
+        return list;
     }
 }

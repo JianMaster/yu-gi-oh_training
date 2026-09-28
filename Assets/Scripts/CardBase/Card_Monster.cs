@@ -56,9 +56,6 @@ public class Card_Monster : CardBase {
         return _defaultActions;
     }
 
-    public override void CheckAction(in List<ActionType> actions, ActionContext context) {
-        
-    }
 
     public override void TurnStart() {
         AttackCount = 0;

@@ -89,14 +89,14 @@ public class Player {
         return _zone[zoneType];
     }
 
-    public List<int> GetAvailableMonsterZone() {
+    public List<int> GetAvailableZone(ZoneType zoneType) {
         List<int> zoneIds = new();
-        for (int i = 0; i < _monsterZone.Count; ++i) {
-            if (_monsterZone[i] == null) {
+        for (int i = 0; i < _zone[zoneType].Count; ++i) {
+            if (_zone[zoneType][i] == null) {
                 zoneIds.Add(i);
             }
         }
-        Log($"当前可用怪兽区域：" + string.Join(" ", zoneIds));
+        Log($"当前可用区域：" + string.Join(" ", zoneIds));
         return zoneIds;
     }
 
