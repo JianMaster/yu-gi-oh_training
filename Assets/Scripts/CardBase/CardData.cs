@@ -6,5 +6,6 @@ public struct CardData {
     public string name;
     public CardType cardType;
     public EffectType effectType;
+    public int effectValue;
 
 }

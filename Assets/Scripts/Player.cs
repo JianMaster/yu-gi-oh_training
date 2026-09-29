@@ -38,6 +38,39 @@ public class Player {
         TurnStart();
     }
 
+    void MoveCard(ZoneType from, ZoneType to, int fromId = -1, int toId = -1) {
+        List<CardBase> fromZone = _zone[from];
+        List<CardBase> toZone = _zone[to];
+        CardBase card;
+        bool fromField = from == ZoneType.Monster || from == ZoneType.SpellTrap;
+        bool toField = to == ZoneType.Monster || to == ZoneType.SpellTrap;
+        if (fromId != -1) {
+            card = fromZone[fromId];
+            if (fromField) {
+                _monsterZone[fromId] = null;
+            }
+            else {
+                fromZone.RemoveAt(fromId);
+            }
+        }
+        else {
+            card = fromZone[^1];
+            fromZone.RemoveAt(fromZone.Count - 1);
+        }
+        if (toId != -1) {
+            if (toField) {
+                toZone[toId] = card;
+            }
+            else {
+                toZone.Insert(toId, card);
+            }
+        }
+        else {
+            toZone.Add(card);
+        }
+        card.ChangeZone(to, toId == -1 ? toZone.Count - 1 : toId);
+    }
+
 
     public void TurnStart() {
         NormalSummonCount = 0;
@@ -69,12 +102,8 @@ public class Player {
                 break;
             }
 
-            int idx = _deck.Count - 1;
-            CardBase card = _deck[idx];
-            _hand.Add(card);
-            _deck.RemoveAt(idx);
-            card.ChangeZone(ZoneType.Hand, _hand.Count - 1);
-            Debug.Log(TextData.Instance.GetFormatText(Text_ID.DrawInfo, card.ShowInfo()));
+            Debug.Log(TextData.Instance.GetFormatText(Text_ID.DrawInfo, _deck[^1].ShowInfo()));
+            MoveCard(ZoneType.Deck, ZoneType.Hand);
         }
         Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.Draw), ID, count, _hand.Count));
     }
@@ -100,13 +129,11 @@ public class Player {
         return zoneIds;
     }
 
-    public void NormalSummon(Card_Monster card, int zoneId) {
-        Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.NormalSummon), ID, card.Name, zoneId));
+    public void NormalSummon(Card_Monster card, int targetZoneId) {
+        Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.NormalSummon), ID, card.Name, targetZoneId));
         NormalSummonCount--;
-        _monsterZone[zoneId] = _hand[card.ZoneId];
-        _hand.RemoveAt(card.ZoneId);
+        MoveCard(ZoneType.Hand, ZoneType.Monster, card.ZoneId, targetZoneId);
         card.NormalSummon();
-        card.ChangeZone(ZoneType.Monster, zoneId);
     }
 
     public List<CardBase> GetAttackTarget() {
@@ -126,15 +153,17 @@ public class Player {
 
         return targets;
     }
-
-    public void DestroyCard(CardBase card) {
-        _zone[card.ZoneType][card.ZoneId] = null;
-        _GY.Add(card);
-        card.ChangeZone(ZoneType.GY, _GY.Count - 1);
+    public void Activate(CardBase card, int targetZoneId) {
+        MoveCard(ZoneType.Hand, ZoneType.SpellTrap, card.ZoneId, targetZoneId);
+        card.Activate();
     }
 
+    public void DestroyCard(CardBase card) {
+        MoveCard(card.ZoneType, ZoneType.GY, card.ZoneId);
+    }
 
     public void Log(string txt) {
         Debug.Log($"Player{ID}:   " + txt);
     }
+
 }

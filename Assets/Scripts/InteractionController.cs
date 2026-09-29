@@ -9,16 +9,6 @@ public class InteractionController {
         Zone,
         Target,
     }
-    class InteractionContext {
-        public Player player;
-        public Player opponent;
-        public ZoneType curZone = ZoneType.Hand;
-        public CardBase selectedCard = null;
-        public List<ActionType> actions = null;
-        public ActionType selectedAction = ActionType.None;
-        public List<int> zoneIds = null;
-        public List<CardBase> targets = null;
-    }
 
     const int DEFALUT_ID = -1;
     GameState _state;
@@ -166,13 +156,8 @@ public class InteractionController {
             Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.targets[_selectTargetId].Name));
         }
         if (inputData[InputType.Confirm] && _selectTargetId != DEFALUT_ID) {
-            Action action = CommandFactory.CreateAttack(
-                context.player,
-                context.opponent,
-                context.selectedCard as Card_Monster,
-                context.targets[_selectTargetId] as Card_Monster,
-                context.targets[_selectTargetId].ZoneId == GameDefines.PLAYER_ZONE
-            );
+            context.targetCard = context.targets[_selectTargetId];
+            var action = CommandFactory.CreateAction(context);
             Debug.Log($"执行指令: {action.Type}");
             ResetState(ref context);
             return action;
@@ -187,11 +172,8 @@ public class InteractionController {
         }
 
         if (inputData[InputType.Confirm] && _selectZoneId != DEFALUT_ID) {
-            Action action = CommandFactory.CreateNormalSummon(
-                context.player,
-                context.selectedCard,
-                context.zoneIds[_selectZoneId]
-            );
+            context.selectZoneId = context.zoneIds[_selectZoneId];
+            var action = CommandFactory.CreateAction(context);
             Debug.Log($"执行指令: {action.Type}");
             ResetState(ref context);
             return action;
@@ -204,12 +186,7 @@ public class InteractionController {
         _selectCardId = DEFALUT_ID;
         _selectActionId = DEFALUT_ID;
         _selectZoneId = DEFALUT_ID;
-        context.curZone = ZoneType.Hand;
-        context.selectedCard = null;
-        context.actions = null;
-        context.selectedAction = ActionType.None;
-        context.zoneIds = null;
-        context.targets = null;
+        context.Reset();
         Debug.Log("重置状态");
     }
 }

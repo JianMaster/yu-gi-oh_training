@@ -1,5 +1,16 @@
 public static class CommandFactory {
-    public static Action CreateNone() {
+    public static Action CreateAction(InteractionContext context) {
+        return context.selectedAction switch {
+            ActionType.None => CreateNone(),
+            ActionType.NextPhase => CreateNextPhase(context.player),
+            ActionType.NormalSummon => CreateNormalSummon(context.player, context.selectedCard, context.selectZoneId),
+            ActionType.Attack => CreateAttack(context.player, context.opponent, context.selectedCard as Card_Monster, context.targetCard as Card_Monster, context.targetCard.ZoneId == GameDefines.PLAYER_ZONE),
+            ActionType.Activate => CreateActivate(context.player, context.selectedCard, context.selectZoneId),
+            _ => CreateNone(),
+        };
+    }
+
+    static Action CreateNone() {
         return new Action();
     }
     public static Action CreateNextPhase(Player player) {
@@ -8,16 +19,16 @@ public static class CommandFactory {
             Excuter = player,
         };
     }
-    public static Action CreateNormalSummon(Player player, CardBase card, int zoneId) {
+    static Action CreateNormalSummon(Player player, CardBase card, int zoneId) {
         Action action = new Action_NormalSummon() {
             Excuter = player,
-            TargetCard = card,
-            TargetZoneId = zoneId,
+            SelectCard = card,
+            SelectZoneId = zoneId,
         };
         return action;
     }
 
-    public static Action CreateAttack(Player player, Player opponent, Card_Monster attackMonster, Card_Monster targetMonster, bool isDirectAttack) {
+    static Action CreateAttack(Player player, Player opponent, Card_Monster attackMonster, Card_Monster targetMonster, bool isDirectAttack) {
         Action action = new Action_Attack() {
             Excuter = player,
             Opponent = opponent,
@@ -28,11 +39,11 @@ public static class CommandFactory {
         return action;
     }
 
-    public static Action CreateActivate(Player player, CardBase targetCard, int targetZoneId) {
+    static Action CreateActivate(Player player, CardBase targetCard, int targetZoneId) {
         Action action = new Action_Activate() {
             Excuter = player,
-            TargetCard = targetCard,
-            TargetZoneId = targetZoneId,
+            SelectCard = targetCard,
+            SelectZoneId = targetZoneId,
         };
         return action;
     }

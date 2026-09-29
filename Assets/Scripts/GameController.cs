@@ -18,32 +18,29 @@ public class GameController {
     }
 
     public void ExcuteCommand(Action action) {
-        if (action.Type == ActionType.None) {
-            return;
+        switch (action.Type) {
+            case ActionType.NextPhase:
+                NextPhase();
+                break;
+            case ActionType.NormalSummon:
+                NormalSummon(action as Action_NormalSummon);
+                break;
+            case ActionType.Attack:
+                Attack(action as Action_Attack);
+                break;
+            case ActionType.Activate:
+                Activate(action as Action_Activate);
+                break;
+            default:
+                return;
         }
-        if (action.Type == ActionType.NextPhase) {
-            NextPhase();
-            if (_gameState.CurPhase == Phase.Draw) {
-                var player = _gameState.TurnOwner;
-                player.TurnStart();
-                if (_gameState.Turn != 1) {
-                    Draw(player, GameDefines.DRAW_CARD_COUNT);
-                }
-                ExcuteCommand(CommandFactory.CreateNextPhase(player)); // 抽牌结束自动下一个阶段
-            }
-            if (_gameState.CurPhase == Phase.End) {
-                ExcuteCommand(CommandFactory.CreateNextPhase(_gameState.TurnOwner));
-            }
-            return;
-        }
+    }
 
-        if (action is Action_NormalSummon normalSummon) {
-            NormalSummon(normalSummon);
-        }
-
-        if (action is Action_Attack attack) {
-            Attack(attack);
-        }
+    void Activate(Action_Activate activate) {
+        var player = activate.Excuter;
+        var card = activate.SelectCard;
+        var zoneId = activate.SelectZoneId;
+        player.Activate(card, zoneId);
     }
 
     void Draw(Player player, int count) {
@@ -52,8 +49,8 @@ public class GameController {
 
     void NormalSummon(Action_NormalSummon action) {
         var player = action.Excuter;
-        var card = action.TargetCard;
-        var zoneId = action.TargetZoneId;
+        var card = action.SelectCard;
+        var zoneId = action.SelectZoneId;
         player.NormalSummon(card as Card_Monster, zoneId);
     }
 
@@ -117,6 +114,9 @@ public class GameController {
         AfterAttack(context);
     }
 
+    void AfterAttack(AttackContext context) {
+        context.attackMonster.AfterAttack();
+    }
     void BeforeAttack(AttackContext context) {
         context.attackMonster.BeforeAttack();
     }
@@ -124,7 +124,7 @@ public class GameController {
     void TakeDamageByAttack(AttackContext context) {
         context.getDamagePlayer.TakeDamage(context.damage);
         bool attackSuccess = context.getDamagePlayer == context.opponent;
-        var info = new DamageEvent(){
+        var info = new DamageEvent() {
             type = DamageType.Battle,
             source = attackSuccess ? context.attacker : context.opponent,
             target = attackSuccess ? context.opponent : context.attacker,
@@ -132,10 +132,6 @@ public class GameController {
             damage = context.damage
         };
         _eventSystem.Trigger(info);
-    }
-
-    void AfterAttack(AttackContext context) {
-        context.attackMonster.AfterAttack();
     }
 
     void DestroyCard(Player player, CardBase card) {
@@ -149,8 +145,19 @@ public class GameController {
     }
 
     void NextPhase() {
-        ResetState();
         _gameState.NextPhase();
+        ResetState();
+        if (_gameState.CurPhase == Phase.Draw) {
+            var player = _gameState.TurnOwner;
+            player.TurnStart();
+            if (_gameState.Turn != 1) {
+                Draw(player, GameDefines.DRAW_CARD_COUNT);
+            }
+            ExcuteCommand(CommandFactory.CreateNextPhase(player)); // 抽牌结束自动下一个阶段
+        }
+        if (_gameState.CurPhase == Phase.End) {
+            ExcuteCommand(CommandFactory.CreateNextPhase(_gameState.TurnOwner));
+        }
     }
 
     void ResetState() {

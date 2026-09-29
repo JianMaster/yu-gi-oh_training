@@ -17,8 +17,10 @@ public class Card_Spell : CardBase {
     }
 
     public override void Activate() {
-        EffectContext context = new();
-
+        EffectContext context = new() {
+            activater = Owner,
+            value = _data.effectValue
+        };
         _effect.Resolve(context);
     }
 

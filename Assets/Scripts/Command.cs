@@ -10,8 +10,8 @@ public class Action {
 }
 
 public class Action_NormalSummon : Action {
-    public CardBase TargetCard { get; set; }
-    public int TargetZoneId { get; set; }
+    public CardBase SelectCard { get; set; }
+    public int SelectZoneId { get; set; }
     public Action_NormalSummon() : base(ActionType.NormalSummon) { }
 }
 
@@ -24,7 +24,7 @@ public class Action_Attack : Action {
 }
 
 public class Action_Activate : Action {
-    public CardBase TargetCard { get; set; }
-    public int TargetZoneId { get; set; }
+    public CardBase SelectCard { get; set; }
+    public int SelectZoneId { get; set; }
     public Action_Activate() : base(ActionType.Activate) { }
 }
