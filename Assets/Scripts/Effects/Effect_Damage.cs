@@ -5,6 +5,6 @@ public class Effect_Damage : IEffect {
         return true;
     }
     public void Resolve(EffectContext context) {
-        context.target.TakeDamage(context.value);
+        context.opponent.TakeDamage(context.value);
     }
 }

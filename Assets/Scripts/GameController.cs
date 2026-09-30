@@ -40,7 +40,11 @@ public class GameController {
         var player = activate.Excuter;
         var card = activate.SelectCard;
         var zoneId = activate.SelectZoneId;
-        player.Activate(card, zoneId);
+        EffectContext context = new() {
+            activater = player,
+            opponent = _gameState.TurnOwner,
+        };
+        player.Activate(card, zoneId, context);
     }
 
     void Draw(Player player, int count) {

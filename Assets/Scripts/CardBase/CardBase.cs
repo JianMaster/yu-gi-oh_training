@@ -34,7 +34,7 @@ public abstract class CardBase {
     public virtual bool CanActivate(ActionType action, ActionContext context) {
         return _effect.CheckCanActive(action, context);
     }
-    public virtual void Activate() { }
+    public virtual void Activate(ref EffectContext context) { }
     public virtual void TurnStart() { }
     public virtual string ShowInfo() {
         return Name;
