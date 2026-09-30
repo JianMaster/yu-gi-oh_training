@@ -1,17 +1,19 @@
-using System;
-using System.Reflection;
 using UnityEngine;
 
 public static class CardFactory {
-    static Assembly s_cardAssembly = typeof(CardFactory).Assembly;
     public static CardBase CreateInstance(string cardId, Player player) {
-        throw new NotImplementedException();
-        Type cardType = s_cardAssembly.GetType($"Card_{cardId}");
-        if (cardType == null) {
-            Debug.LogError($"找不到 Card_{cardId}");
-            return null;
+        CardData cardData = Resources.Load<CardData>($"{cardId}");
+        CardBase card = null;
+        if (cardData.cardType == CardType.Monster) {
+            card = new Card_Monster(cardData, player);
         }
-        CardBase card = Activator.CreateInstance(cardType) as CardBase;
+        else if (cardData.cardType == CardType.Spell) {
+            card = new Card_Spell(cardData, player);
+        }
+        else if (cardData.cardType == CardType.Trap) {
+            card = new Card_Trap(cardData, player);
+        }
+
         return card;
     }
 }

@@ -7,6 +7,7 @@ public abstract class CardBase {
     public Player Owner { get; protected set; }
     public ZoneType ZoneType { get; protected set; }
     public int ZoneId { get; protected set; }
+
     public string ID { get; protected set; }
     public string Name { get; protected set; }
     public CardType CardType { get; protected set; }
@@ -19,7 +20,7 @@ public abstract class CardBase {
         _effect = EffectFactory.CreateInstance(data);
         Owner = belong;
         ID = data.id;
-        Name = data.name;
+        Name = data.cardName;
         CardType = data.cardType;
         TurnStart();
     }

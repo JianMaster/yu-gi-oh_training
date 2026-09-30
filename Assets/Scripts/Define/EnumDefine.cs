@@ -1,5 +1,4 @@
-public enum CardType
-{
+public enum CardType {
     Monster,
     Spell,
     Trap
@@ -18,8 +17,7 @@ public enum ZoneType {
     GY,
 }
 
-public enum Phase
-{
+public enum Phase {
     Draw,
     // Stand,
     Main1,
@@ -52,6 +50,7 @@ public enum ActionType {
 }
 
 public enum EffectType {
+    None,
     Healing,
     Damage,
 }

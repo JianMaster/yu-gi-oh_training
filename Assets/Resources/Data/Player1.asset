@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d99ba5e0e77c2a4892a78b8355b8509, type: 3}
   m_Name: Player1
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
-  Deck: 001 001 001 001 002 002 002
+  Deck: 001 003 004 001 002 002 002
