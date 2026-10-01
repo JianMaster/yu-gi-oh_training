@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class CardFactory {
     public static CardBase CreateInstance(string cardId, Player player) {
-        CardData cardData = Resources.Load<CardData>($"{cardId}");
+        CardData cardData = Resources.Load<CardData>($"Data/Card/{cardId}");
         CardBase card = null;
         if (cardData.cardType == CardType.Monster) {
             card = new Card_Monster(cardData, player);

@@ -7,6 +7,6 @@ public class Effect_Healing : IEffect {
     }
 
     public void Resolve(EffectContext context) {
-        context.opponent.Heal(context.value);
+        context.activater.Heal(context.value);
     }
 }

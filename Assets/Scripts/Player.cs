@@ -46,7 +46,7 @@ public class Player {
         bool fromField = from == ZoneType.Monster || from == ZoneType.SpellTrap;
         bool toField = to == ZoneType.Monster || to == ZoneType.SpellTrap;
         if (fromField) {
-            _monsterZone[fromId] = null;
+            fromZone[fromId] = null;
         }
         else {
             fromZone.RemoveAt(fromId);
@@ -58,7 +58,16 @@ public class Player {
         else {
             toZone.Add(card);
         }
-        card.ChangeZone(to, toZone.Count - 1);
+
+        RecalcuteCardPos(to);
+        RecalcuteCardPos(from);
+    }
+
+    void RecalcuteCardPos(ZoneType zoneType) {
+        List<CardBase> zone = _zone[zoneType];
+        for (int i = 0; i < zone.Count; ++i) {
+            zone[i]?.ChangeZone(zoneType, i);
+        }
     }
 
 

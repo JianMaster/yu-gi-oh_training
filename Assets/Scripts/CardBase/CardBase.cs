@@ -7,11 +7,11 @@ public abstract class CardBase {
     public Player Owner { get; protected set; }
     public ZoneType ZoneType { get; protected set; }
     public int ZoneId { get; protected set; }
+    public CardFace Face { get; protected set; }
 
     public string ID { get; protected set; }
     public string Name { get; protected set; }
     public CardType CardType { get; protected set; }
-    public CardFace Face { get; protected set; }
     public IEffect Effect => _effect;
     public bool HasEffect => _effect is not Effect_None;
 

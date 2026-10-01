@@ -87,6 +87,7 @@ public class GameRule {
     }
 
     bool CheckActivate(CardBase card, ActionContext context) {
-        return card.HasEffect;
+        Phase phase = context.state.CurPhase;
+        return phase == Phase.Main1 && card.HasEffect;
     }
 }

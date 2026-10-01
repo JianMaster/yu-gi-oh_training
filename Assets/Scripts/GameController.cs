@@ -42,7 +42,7 @@ public class GameController {
         var zoneId = activate.SelectZoneId;
         EffectContext context = new() {
             activater = player,
-            opponent = _gameState.TurnOwner,
+            opponent = _gameState.Opponent,
         };
         player.Activate(card, zoneId, context);
     }

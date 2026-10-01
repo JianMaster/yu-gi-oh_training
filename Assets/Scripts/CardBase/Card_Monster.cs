@@ -8,13 +8,18 @@ public class Card_Monster : CardBase {
     public int Atk { get; protected set; }
     public int Def { get; protected set; }
 
-    public int AttackCount { get;private set; }
+    public int AttackCount { get; private set; }
     public int ChangePositionCount { get; private set; }
 
     public Card_Monster(CardData data, Player player) : base(data, player) {
+        Attribute = data.attribute;
+        Type = data.type;
+        Level = data.level;
+        Atk = data.atk;
+        Def = data.def;
         _defaultActions = new() {
             ActionType.NormalSummon,
-            ActionType.SpecialSummon,
+            // ActionType.SpecialSummon,
             ActionType.Activate,
             ActionType.ChangePosition,
             ActionType.MonsterSet,
