@@ -12,7 +12,12 @@ public class Card_Spell : CardBase {
         return _defaultActions;
     }
 
+    public override void Set() {
+        base.Set();
+    }
+
     public override void Activate(ref EffectContext context) {
+        base.Activate(ref context);
         context.value = _data.effectValue;
         _effect.Resolve(context);
     }

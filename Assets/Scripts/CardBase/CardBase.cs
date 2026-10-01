@@ -8,6 +8,8 @@ public abstract class CardBase {
     public ZoneType ZoneType { get; protected set; }
     public int ZoneId { get; protected set; }
     public CardFace Face { get; protected set; }
+    public bool SetTurn { get; private set; }
+    public bool SetAndDown => SetTurn && Face == CardFace.FaceDown;
 
     public string ID { get; protected set; }
     public string Name { get; protected set; }
@@ -32,11 +34,19 @@ public abstract class CardBase {
     public virtual List<ActionType> GetAction() {
         return new();
     }
+    public virtual void Set() {
+        SetTurn = true;
+        Face = CardFace.FaceDown;
+    }
     public virtual bool CanActivate(ActionType action, ActionContext context) {
         return _effect.CheckCanActive(action, context);
     }
-    public virtual void Activate(ref EffectContext context) { }
-    public virtual void TurnStart() { }
+    public virtual void Activate(ref EffectContext context) {
+        Face = CardFace.FaceUp;
+    }
+    public virtual void TurnStart() {
+        SetTurn = false;
+    }
     public virtual string ShowInfo() {
         return Name;
     }
