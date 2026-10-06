@@ -26,5 +26,7 @@ public class Action_Attack : Action {
 public class Action_Activate : Action {
     public CardBase SelectCard { get; set; }
     public int SelectZoneId { get; set; }
+    public ZoneType fromZone { get; set; }
+    public ZoneType toZone { get; set; }
     public Action_Activate() : base(ActionType.Activate) { }
 }

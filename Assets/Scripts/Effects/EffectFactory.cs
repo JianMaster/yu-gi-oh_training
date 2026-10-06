@@ -1,12 +1,13 @@
 public static class EffectFactory {
-    public static IEffect CreateInstance(CardData data) {
-        switch (data.effectType) {
-            case EffectType.Healing:
-                return new Effect_Healing();
-            case EffectType.Damage:
-                return new Effect_Damage();
-            default:
-                return new Effect_None();
-        }
+    public static IEffect CreateInstance(CardBase card, CardData data) {
+        IEffect effect;
+        effect = data.effectType switch {
+            EffectType.Healing => new Effect_Healing(),
+            EffectType.Damage => new Effect_Damage(),
+            _ => new Effect_None(),
+        };
+
+        effect.Init(card);
+        return effect;
     }
 }

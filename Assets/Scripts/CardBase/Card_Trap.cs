@@ -2,17 +2,22 @@ using System.Collections.Generic;
 
 public class Card_Trap : CardBase { 
     public Card_Trap(CardData data, Player belong) : base(data, belong) {
-        _defaultActions = new() {
-            ActionType.Activate,
-            ActionType.SpellTrapSet,
-        };
+        
     }
 
-    public override List<ActionType> GetAction() {
-        return _defaultActions;
+    public override void Activate(ref EffectContext context) {
+        Face = CardFace.FaceUp;
+        context.value = _data.effectValue;
+        _effect.Resolve(context);
+    }
+
+
+    public override void Set() {
+        Face = CardFace.FaceDown;
+        SetTurn = true;
     }
 
     public override void TurnStart() {
-        base.TurnStart();
+        SetTurn = false;
     }
 }

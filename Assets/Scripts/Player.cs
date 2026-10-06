@@ -38,7 +38,7 @@ public class Player {
         TurnStart();
     }
 
-    void MoveCard(CardBase card, ZoneType to, int toId = -1) {
+    public void MoveCard(CardBase card, ZoneType to, int toId = -1) {
         ZoneType from = card.ZoneType;
         int fromId = card.ZoneId;
         List<CardBase> fromZone = _zone[from];
@@ -130,7 +130,7 @@ public class Player {
 
     public void NormalSummon(Card_Monster card, int targetZoneId) {
         Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.NormalSummon), ID, card.Name, targetZoneId));
-        NormalSummonCount--;
+        NormalSummonCount++;
         MoveCard(card, ZoneType.Monster, targetZoneId);
         card.NormalSummon();
     }
@@ -151,19 +151,6 @@ public class Player {
         }
 
         return targets;
-    }
-    public void Activate(CardBase card, int targetZoneId, EffectContext context) {
-        if (card.Owner != this) {
-            Debug.LogError("卡牌不属于该玩家");
-            return;
-        }
-        MoveCard(card, ZoneType.SpellTrap, targetZoneId);
-        card.Activate(ref context);
-        MoveCard(card, ZoneType.GY);
-    }
-
-    public void DestroyCard(CardBase card) {
-        MoveCard(card, ZoneType.GY);
     }
 
     public void Log(string txt) {

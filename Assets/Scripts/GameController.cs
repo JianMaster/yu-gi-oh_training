@@ -40,11 +40,27 @@ public class GameController {
         var player = activate.Excuter;
         var card = activate.SelectCard;
         var zoneId = activate.SelectZoneId;
+        var fromZone = activate.fromZone;
+        var toZone = activate.toZone;
+        var effect = card.Effect;
+        if (card.Owner != player) {
+            Debug.LogError("卡牌不属于该玩家");
+            return;
+        }
+
         EffectContext context = new() {
             activater = player,
             opponent = _gameState.Opponent,
         };
-        player.Activate(card, zoneId, context);
+        if (fromZone != toZone) {
+            player.MoveCard(card, ZoneType.SpellTrap, zoneId);
+        }
+
+        effect.Resolve(context);
+        
+        if (card.CardType != CardType.Monster) {
+            player.MoveCard(card, ZoneType.GY);
+        }
     }
 
     void Draw(Player player, int count) {
@@ -143,7 +159,7 @@ public class GameController {
             Debug.LogError("卡牌不属于该玩家");
             return;
         }
-        player.DestroyCard(card);
+        player.MoveCard(card, ZoneType.GY);
 
         Debug.Log(TextData.Instance.GetFormatText(Text_ID.Destroy, player.ID, card.Name));
     }
@@ -154,6 +170,7 @@ public class GameController {
         if (_gameState.CurPhase == Phase.Draw) {
             var player = _gameState.TurnOwner;
             player.TurnStart();
+            _gameState.Opponent.TurnStart();
             if (_gameState.Turn != 1) {
                 Draw(player, GameDefines.DRAW_CARD_COUNT);
             }

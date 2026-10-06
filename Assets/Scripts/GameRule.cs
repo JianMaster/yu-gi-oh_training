@@ -88,6 +88,10 @@ public class GameRule {
 
     bool CheckActivate(CardBase card, ActionContext context) {
         Phase phase = context.state.CurPhase;
-        return phase == Phase.Main1 && card.HasEffect;
+        bool pass = phase == Phase.Main1 && card.HasEffect;
+        if (card is Card_Trap trap) {
+            pass = pass && !trap.SetAndDown;
+        }
+        return pass;
     }
 }

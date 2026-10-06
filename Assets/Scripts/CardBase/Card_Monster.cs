@@ -17,24 +17,11 @@ public class Card_Monster : CardBase {
         Level = data.level;
         Atk = data.atk;
         Def = data.def;
-        _defaultActions = new() {
-            ActionType.NormalSummon,
-            // ActionType.SpecialSummon,
-            ActionType.Activate,
-            ActionType.ChangePosition,
-            ActionType.MonsterSet,
-            ActionType.Attack,
-        };
     }
 
     public void NormalSummon() {
         Face = CardFace.FaceUp;
         Position = MonterPosition.Attack;
-    }
-
-    public void Set() {
-        Face = CardFace.FaceDown;
-        Position = MonterPosition.Defense;
     }
 
     public void Flip() {
@@ -47,20 +34,15 @@ public class Card_Monster : CardBase {
     }
 
     public void ChangePosition() {
-        ChangePositionCount--;
+        ChangePositionCount++;
         Position = Position == MonterPosition.Attack ? MonterPosition.Defense : MonterPosition.Attack;
     }
 
     public void BeforeAttack() { }
 
     public void AfterAttack() {
-        AttackCount--;
+        AttackCount++;
     }
-
-    public override List<ActionType> GetAction() {
-        return _defaultActions;
-    }
-
 
     public override void TurnStart() {
         AttackCount = 0;
@@ -72,4 +54,12 @@ public class Card_Monster : CardBase {
         return info;
     }
 
+    public override void Set() {
+        Face = CardFace.FaceDown;
+        SetTurn = true;
+    }
+
+    public override void Activate(ref EffectContext context) {
+        _effect.Resolve(context);
+    }
 }
