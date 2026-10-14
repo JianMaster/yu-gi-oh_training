@@ -128,6 +128,7 @@ public class InteractionController {
             context.selectedAction = actionType;
             if (actionType == ActionType.NormalSummon) {
                 _curState = SelectState.Zone;
+                context.toZone = ZoneType.Monster;
                 context.zoneIds = context.player.GetAvailableZone(ZoneType.Monster);
                 // 通常召唤
                 Debug.Log(TextData.Instance.GetText(Text_ID.SelectCommand_2));
@@ -141,6 +142,7 @@ public class InteractionController {
             }
             else if(actionType == ActionType.Activate) {
                 _curState = SelectState.Zone;
+                context.toZone = ZoneType.SpellTrap;
                 context.zoneIds = context.player.GetAvailableZone(ZoneType.SpellTrap);
                 Debug.Log(TextData.Instance.GetText(Text_ID.SelectCommand_3));
             }
@@ -172,7 +174,7 @@ public class InteractionController {
         }
 
         if (inputData[InputType.Confirm] && _selectZoneId != DEFALUT_ID) {
-            context.selectZoneId = context.zoneIds[_selectZoneId];
+            context.toZoneId = context.zoneIds[_selectZoneId];
             var action = CommandFactory.CreateAction(context);
             Debug.Log($"执行指令: {action.Type}");
             ResetState(ref context);

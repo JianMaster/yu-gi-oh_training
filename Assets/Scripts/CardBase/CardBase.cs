@@ -24,7 +24,6 @@ public abstract class CardBase {
         ID = data.id;
         Name = data.cardName;
         CardType = data.cardType;
-        TurnStart();
     }
 
     public void ChangeZone(ZoneType zoneType, int zoneId) {
@@ -33,7 +32,7 @@ public abstract class CardBase {
     }
 
     public abstract void Set();
-    public abstract void Activate(ref EffectContext context);
+    public abstract void Flip();
     public abstract void TurnStart();
     public virtual string ShowInfo() {
         return Name;

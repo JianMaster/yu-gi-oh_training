@@ -17,14 +17,10 @@ public class Card_Monster : CardBase {
         Level = data.level;
         Atk = data.atk;
         Def = data.def;
+        TurnStart();
     }
 
     public void NormalSummon() {
-        Face = CardFace.FaceUp;
-        Position = MonterPosition.Attack;
-    }
-
-    public void Flip() {
         Face = CardFace.FaceUp;
         Position = MonterPosition.Attack;
     }
@@ -59,7 +55,9 @@ public class Card_Monster : CardBase {
         SetTurn = true;
     }
 
-    public override void Activate(ref EffectContext context) {
-        _effect.Resolve(context);
+    public override void Flip() {
+        Face = CardFace.FaceUp;
+        Position = MonterPosition.Attack;
     }
+
 }

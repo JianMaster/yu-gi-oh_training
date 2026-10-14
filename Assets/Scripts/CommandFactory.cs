@@ -3,9 +3,9 @@ public static class CommandFactory {
         return context.selectedAction switch {
             ActionType.None => CreateNone(),
             ActionType.NextPhase => CreateNextPhase(context.player),
-            ActionType.NormalSummon => CreateNormalSummon(context.player, context.selectedCard, context.selectZoneId),
+            ActionType.NormalSummon => CreateNormalSummon(context.player, context.selectedCard, context.toZoneId),
             ActionType.Attack => CreateAttack(context.player, context.opponent, context.selectedCard as Card_Monster, context.targetCard as Card_Monster, context.targetCard.ZoneId == GameDefines.PLAYER_ZONE),
-            ActionType.Activate => CreateActivate(context.player, context.selectedCard, context.selectZoneId),
+            ActionType.Activate => CreateActivate(context.player, context.selectedCard, context.toZone, context.toZoneId),
             _ => CreateNone(),
         };
     }
@@ -39,11 +39,12 @@ public static class CommandFactory {
         return action;
     }
 
-    static Action CreateActivate(Player player, CardBase targetCard, int targetZoneId) {
+    static Action CreateActivate(Player player, CardBase targetCard, ZoneType targetZone, int targetZoneId) {
         Action action = new Action_Activate() {
             Excuter = player,
             SelectCard = targetCard,
-            SelectZoneId = targetZoneId,
+            toZone = targetZone,
+            toZoneId = targetZoneId,
         };
         return action;
     }

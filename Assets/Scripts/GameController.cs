@@ -39,8 +39,8 @@ public class GameController {
     void Activate(Action_Activate activate) {
         var player = activate.Excuter;
         var card = activate.SelectCard;
-        var zoneId = activate.SelectZoneId;
-        var fromZone = activate.fromZone;
+        var toZoneId = activate.toZoneId;
+        var fromZone = card.ZoneType;
         var toZone = activate.toZone;
         var effect = card.Effect;
         if (card.Owner != player) {
@@ -53,11 +53,15 @@ public class GameController {
             opponent = _gameState.Opponent,
         };
         if (fromZone != toZone) {
-            player.MoveCard(card, ZoneType.SpellTrap, zoneId);
+            player.MoveCard(card, ZoneType.SpellTrap, toZoneId);
+        }
+
+        if (fromZone == toZone && card.CardType != CardType.Monster) {
+            card.Flip();
         }
 
         effect.Resolve(context);
-        
+
         if (card.CardType != CardType.Monster) {
             player.MoveCard(card, ZoneType.GY);
         }

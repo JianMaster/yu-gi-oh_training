@@ -10,7 +10,8 @@ public class InteractionContext {
     public Player player;
     public Player opponent;
     public CardBase selectedCard = null;
-    public int selectZoneId = 0;
+    public ZoneType toZone = ZoneType.Hand;
+    public int toZoneId = 0;
     public CardBase targetCard = null;
 
     public void Reset() {
@@ -21,7 +22,7 @@ public class InteractionContext {
         
         selectedAction = ActionType.None;
         selectedCard = null;
-        selectZoneId = 0;
+        toZoneId = 0;
         targetCard = null;
     }
 }
