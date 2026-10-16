@@ -10,7 +10,7 @@ public class InteractionController {
         Target,
     }
 
-    const int DEFALUT_ID = -1;
+    const int DEFAULT_ID = -1;
     GameState _state;
     ActionQuery _actionQuery;
     SelectState _curState;
@@ -57,11 +57,11 @@ public class InteractionController {
         }
 
         if (_curState == SelectState.None) {
-            Selcet(inputData, _context);
+            Select(inputData, _context);
             if (inputData[InputType.NextPhase]) {
                 return new Action() {
                     Type = ActionType.NextPhase,
-                    Excuter = _context.player
+                    Executer = _context.player
                 };
             }
         }
@@ -78,8 +78,8 @@ public class InteractionController {
         return _defaultAction;
     }
 
-    int _selectCardId = DEFALUT_ID;
-    Action Selcet(InputData inputData, InteractionContext context) {
+    int _selectCardId = DEFAULT_ID;
+    Action Select(InputData inputData, InteractionContext context) {
         if (TryGetSelectZone(inputData, ref context.curZone)) {
             Debug.Log($"当前选择区域: {context.curZone}");
         }
@@ -92,7 +92,7 @@ public class InteractionController {
 
         if (inputData[InputType.Confirm]) {
             var list = context.player.GetZoneCards(context.curZone);
-            if (_selectCardId == DEFALUT_ID || list[_selectCardId] == null) {
+            if (_selectCardId == DEFAULT_ID || list[_selectCardId] == null) {
                 Debug.Log("当前无可操作卡");
                 return _defaultAction;
             }
@@ -116,14 +116,14 @@ public class InteractionController {
         return _defaultAction;
     }
 
-    int _selectActionId = DEFALUT_ID;
+    int _selectActionId = DEFAULT_ID;
     Action SelectAction(InputData inputData, InteractionContext context) {
         if (TryGetSelect(inputData, ref _selectActionId, context.actions.Count)) {
             // 选择指令
             Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.actions[_selectActionId]));
         }
 
-        if (inputData[InputType.Confirm] && _selectActionId != DEFALUT_ID) {
+        if (inputData[InputType.Confirm] && _selectActionId != DEFAULT_ID) {
             ActionType actionType = context.actions[_selectActionId];
             context.selectedAction = actionType;
             if (actionType == ActionType.NormalSummon) {
@@ -152,12 +152,12 @@ public class InteractionController {
 
     }
 
-    int _selectTargetId = DEFALUT_ID;
+    int _selectTargetId = DEFAULT_ID;
     Action SelectTarget(InputData inputData, InteractionContext context) {
         if (TryGetSelect(inputData, ref _selectTargetId, context.targets.Count)) {
             Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.targets[_selectTargetId].Name));
         }
-        if (inputData[InputType.Confirm] && _selectTargetId != DEFALUT_ID) {
+        if (inputData[InputType.Confirm] && _selectTargetId != DEFAULT_ID) {
             context.targetCard = context.targets[_selectTargetId];
             var action = CommandFactory.CreateAction(context);
             Debug.Log($"执行指令: {action.Type}");
@@ -167,13 +167,13 @@ public class InteractionController {
         return _defaultAction;
     }
 
-    int _selectZoneId = DEFALUT_ID;
+    int _selectZoneId = DEFAULT_ID;
     Action SelectZone(InputData inputData, InteractionContext context) {
         if (TryGetSelect(inputData, ref _selectZoneId, context.zoneIds.Count)) {
             Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.zoneIds[_selectZoneId]));
         }
 
-        if (inputData[InputType.Confirm] && _selectZoneId != DEFALUT_ID) {
+        if (inputData[InputType.Confirm] && _selectZoneId != DEFAULT_ID) {
             context.toZoneId = context.zoneIds[_selectZoneId];
             var action = CommandFactory.CreateAction(context);
             Debug.Log($"执行指令: {action.Type}");
@@ -185,9 +185,10 @@ public class InteractionController {
 
     void ResetState(ref InteractionContext context) {
         _curState = SelectState.None;
-        _selectCardId = DEFALUT_ID;
-        _selectActionId = DEFALUT_ID;
-        _selectZoneId = DEFALUT_ID;
+        _selectCardId = DEFAULT_ID;
+        _selectActionId = DEFAULT_ID;
+        _selectTargetId = DEFAULT_ID;
+        _selectZoneId = DEFAULT_ID;
         context.Reset();
         Debug.Log("重置状态");
     }

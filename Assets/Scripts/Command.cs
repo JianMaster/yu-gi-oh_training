@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Action {
     public ActionType Type { get; set; } = ActionType.None;
-    public Player Excuter { get; set; }
+    public Player Executer { get; set; }
     public Action() { }
     public Action(ActionType type) {
         Type = type;

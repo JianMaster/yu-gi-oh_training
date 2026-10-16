@@ -37,7 +37,7 @@ public class GameController {
     }
 
     void Activate(Action_Activate activate) {
-        var player = activate.Excuter;
+        var player = activate.Executer;
         var card = activate.SelectCard;
         var toZoneId = activate.toZoneId;
         var fromZone = card.ZoneType;
@@ -72,14 +72,14 @@ public class GameController {
     }
 
     void NormalSummon(Action_NormalSummon action) {
-        var player = action.Excuter;
+        var player = action.Executer;
         var card = action.SelectCard;
         var zoneId = action.SelectZoneId;
         player.NormalSummon(card as Card_Monster, zoneId);
     }
 
     void Attack(Action_Attack action) {
-        var attacker = action.Excuter;
+        var attacker = action.Executer;
         var opponent = action.Opponent;
         var attackMonster = action.AttackMonster;
         var targetMonster = action.TargetMonster;

@@ -16,12 +16,12 @@ public static class CommandFactory {
     public static Action CreateNextPhase(Player player) {
         return new Action() {
             Type = ActionType.NextPhase,
-            Excuter = player,
+            Executer = player,
         };
     }
     static Action CreateNormalSummon(Player player, CardBase card, int zoneId) {
         Action action = new Action_NormalSummon() {
-            Excuter = player,
+            Executer = player,
             SelectCard = card,
             SelectZoneId = zoneId,
         };
@@ -30,7 +30,7 @@ public static class CommandFactory {
 
     static Action CreateAttack(Player player, Player opponent, Card_Monster attackMonster, Card_Monster targetMonster, bool isDirectAttack) {
         Action action = new Action_Attack() {
-            Excuter = player,
+            Executer = player,
             Opponent = opponent,
             AttackMonster = attackMonster,
             TargetMonster = targetMonster,
@@ -41,7 +41,7 @@ public static class CommandFactory {
 
     static Action CreateActivate(Player player, CardBase targetCard, ZoneType targetZone, int targetZoneId) {
         Action action = new Action_Activate() {
-            Excuter = player,
+            Executer = player,
             SelectCard = targetCard,
             toZone = targetZone,
             toZoneId = targetZoneId,
