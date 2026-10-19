@@ -41,10 +41,10 @@ public class GameRule {
 
     bool CheckSpellTrapSet(CardBase card, ActionContext context) {
         Phase phase = context.state.CurPhase;
-        Player player = context.player;
-        if (card.ZoneType == ZoneType.Hand &&
-            phase == Phase.Main1 &&
-            player.NormalSummonCount < GameDefines.SUMMON_NORMAL_COUNT) {
+        bool canSet = context.player.GetAvailableZone(ZoneType.SpellTrap).Count > 0;
+        if (canSet &&
+            card.ZoneType == ZoneType.Hand &&
+            phase == Phase.Main1) {
             return true;
         }
 

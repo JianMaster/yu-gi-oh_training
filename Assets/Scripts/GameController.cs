@@ -50,7 +50,7 @@ public class GameController {
 
         EffectContext context = new() {
             activater = player,
-            opponent = _gameState.Opponent,
+            opponent = _gameState.GetOpponent(player),
         };
         if (fromZone != toZone) {
             player.MoveCard(card, ZoneType.SpellTrap, toZoneId);
@@ -129,7 +129,6 @@ public class GameController {
                 DestroyCard(opponent, targetMonster);
             }
             else if (def > atk) {
-                attacker.TakeDamage(def - atk);
                 context.damage = def - atk;
                 context.getDamagePlayer = attacker;
                 TakeDamageByAttack(context);
