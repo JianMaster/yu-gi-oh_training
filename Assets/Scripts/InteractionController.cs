@@ -81,6 +81,7 @@ public class InteractionController {
     int _selectCardId = DEFAULT_ID;
     Action Select(InputData inputData, InteractionContext context) {
         if (TryGetSelectZone(inputData, ref context.curZone)) {
+            _selectCardId = DEFAULT_ID;
             Debug.Log($"当前选择区域: {context.curZone}");
         }
         if (TryGetSelect(inputData, ref _selectCardId, context.player.GetZoneCards(context.curZone).Count)) {
