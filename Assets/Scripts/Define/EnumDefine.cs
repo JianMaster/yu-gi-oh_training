@@ -74,3 +74,11 @@ public enum DamageType {
     Battle,
     Effect,
 }
+
+public enum ActionStep {
+    None,
+    ActionSelect,
+    Zone,
+    Target,
+    Execute,
+}

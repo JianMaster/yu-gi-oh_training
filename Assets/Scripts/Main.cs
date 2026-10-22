@@ -29,7 +29,7 @@ public class Main : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         _inputManager.GetInput(ref _inputData);
-        Action action = _interaction.GetAction(_inputData);
+        IGameAction action = _interaction.GetAction(_inputData);
         _game.ExcuteCommand(action);
 
     }

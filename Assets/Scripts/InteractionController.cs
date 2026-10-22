@@ -3,25 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InteractionController {
-    enum SelectState {
-        None,
-        Action,
-        Zone,
-        Target,
-    }
-
     const int DEFAULT_ID = -1;
     GameState _state;
     ActionQuery _actionQuery;
-    SelectState _curState;
-    InteractionContext _context;
-
-    Action _defaultAction = new();
+    ActionStep _curState;
+    ActionContext _context;
+    IGameAction _action;
 
     public InteractionController(GameState state, ActionQuery query) {
         _state = state;
         _actionQuery = query;
-        _curState = SelectState.None;
+        _curState = ActionStep.None;
         ChangePlayer(_state.TurnOwner);
     }
 
@@ -50,142 +42,119 @@ public class InteractionController {
         return false;
     }
 
-    public Action GetAction(InputData inputData) {
+    public IGameAction GetAction(InputData inputData) {
         if (inputData[InputType.Cancel]) {
-            ResetState(ref _context);
-            return _defaultAction;
+            ResetState(in _context);
+            return null;
         }
 
-        if (_curState == SelectState.None) {
+        if (_curState == ActionStep.None) {
             Select(inputData, _context);
             if (inputData[InputType.NextPhase]) {
-                return new Action() {
-                    Type = ActionType.NextPhase,
-                    Executer = _context.player
-                };
+                // return CommandFactory.CreateNextPhase(_context.player);
             }
         }
-        else if (_curState == SelectState.Action) {
-            return SelectAction(inputData, _context);
+        else if (_curState == ActionStep.ActionSelect) {
+            SelectAction(inputData, _context);
         }
-        else if (_curState == SelectState.Zone) {
-            return SelectZone(inputData, _context);
+        else if (_curState == ActionStep.Zone) {
+            SelectZone(inputData, _action, _context);
         }
-        else if (_curState == SelectState.Target) {
-            return SelectTarget(inputData, _context);
+        else if (_curState == ActionStep.Target) {
+            SelectTarget(inputData, _action, _context);
         }
 
-        return _defaultAction;
+
+        if (_curState == ActionStep.Execute) {
+            ResetState(in _context);
+            return _action;
+        }
+
+        return null;
     }
 
     int _selectCardId = DEFAULT_ID;
-    Action Select(InputData inputData, InteractionContext context) {
-        if (TryGetSelectZone(inputData, ref context.curZone)) {
+    ZoneType _curZone = ZoneType.Hand;
+    void Select(InputData inputData, ActionContext ctx) {
+        if (TryGetSelectZone(inputData, ref _curZone)) {
             _selectCardId = DEFAULT_ID;
-            Debug.Log($"当前选择区域: {context.curZone}");
+            Debug.Log($"当前选择区域: {_curZone}");
         }
-        if (TryGetSelect(inputData, ref _selectCardId, context.player.GetZoneCards(context.curZone).Count)) {
-            var player = context.player;
-            var list = player.GetZoneCards(context.curZone);
-            Debug.Log($"当前玩家: {player.ID}, 当前选择区域: {context.curZone}, 当前选择id: {_selectCardId}");
+        if (TryGetSelect(inputData, ref _selectCardId, ctx.player.GetZoneCards(_curZone).Count)) {
+            var player = ctx.player;
+            var list = player.GetZoneCards(_curZone);
+            Debug.Log($"当前玩家: {player.ID}, 当前选择区域: {_curZone}, 当前选择id: {_selectCardId}");
             Debug.Log(list[_selectCardId] == null ? "当前区域没有卡牌" : list[_selectCardId].ShowInfo());
         }
 
         if (inputData[InputType.Confirm]) {
-            var list = context.player.GetZoneCards(context.curZone);
+            var list = ctx.player.GetZoneCards(_curZone);
             if (_selectCardId == DEFAULT_ID || list[_selectCardId] == null) {
                 Debug.Log("当前无可操作卡");
-                return _defaultAction;
+                return;
             }
             var card = list[_selectCardId]; // 当前选择的卡牌
-            ActionContext actionContext = new() {
-                state = _state,
-                player = context.player,
-            };
-            var actions = _actionQuery.GetAvailableAction(card, actionContext);
-            if (actions.Count != 0) {
-                context.selectedCard = card;
-                context.actions = actions;
-                _curState = SelectState.Action;
-                Debug.Log($"进入指令选择，当前可用指令: {string.Join(" ", actions)}");
+            _actions = _actionQuery.GetAvailableAction(card, ctx.player, _state);
+            if (_actions.Count != 0) {
+                ctx.selectedCard = card;
+                _curState = ActionStep.ActionSelect;
+                Debug.Log($"进入指令选择，当前可用指令: {string.Join(" ", _actions)}");
             }
             else {
                 Debug.Log("当前无可操作选项");
             }
 
         }
-        return _defaultAction;
+        return;
     }
 
     int _selectActionId = DEFAULT_ID;
-    Action SelectAction(InputData inputData, InteractionContext context) {
-        if (TryGetSelect(inputData, ref _selectActionId, context.actions.Count)) {
+    List<IGameAction> _actions = new();
+    void SelectAction(InputData inputData, ActionContext ctx) {
+        if (TryGetSelect(inputData, ref _selectActionId, _actions.Count)) {
             // 选择指令
-            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.actions[_selectActionId]));
+            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, _actions[_selectActionId].Type));
         }
 
         if (inputData[InputType.Confirm] && _selectActionId != DEFAULT_ID) {
-            ActionType actionType = context.actions[_selectActionId];
-            context.selectedAction = actionType;
-            if (actionType == ActionType.NormalSummon) {
-                _curState = SelectState.Zone;
-                context.toZone = ZoneType.Monster;
-                context.zoneIds = context.player.GetAvailableZone(ZoneType.Monster);
-                // 通常召唤
-                Debug.Log(TextData.Instance.GetText(Text_ID.SelectCommand_2));
+            _action = _actions[_selectActionId];
+            _curState = _action.GetNextStep(ctx);
+            if (_curState == ActionStep.Zone) {
+                _zoneIds = _action.GetZoneOptions(ctx);
             }
-            else if (actionType == ActionType.Attack) {
-                _curState = SelectState.Target;
-                context.targets = context.opponent.GetAttackTarget();
-                foreach (var card in context.targets) {
-                    Debug.Log(TextData.Instance.GetFormatText(Text_ID.GetAttackTarget, card.ZoneId, card.Name));
-                }
-            }
-            else if(actionType == ActionType.Activate) {
-                _curState = SelectState.Zone;
-                context.toZone = ZoneType.SpellTrap;
-                context.zoneIds = context.player.GetAvailableZone(ZoneType.SpellTrap);
-                Debug.Log(TextData.Instance.GetText(Text_ID.SelectCommand_3));
+            else if (_curState == ActionStep.Target) {
+                _targets = _action.GetTargetOptions(ctx);
             }
         }
-
-        return _defaultAction;
-
     }
 
     int _selectTargetId = DEFAULT_ID;
-    Action SelectTarget(InputData inputData, InteractionContext context) {
-        if (TryGetSelect(inputData, ref _selectTargetId, context.targets.Count)) {
-            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.targets[_selectTargetId].Name));
+    IReadOnlyList<CardBase> _targets = new List<CardBase>();
+    void SelectTarget(InputData inputData, IGameAction action, ActionContext ctx) {
+        if (TryGetSelect(inputData, ref _selectTargetId, _targets.Count)) {
+            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, _targets[_selectTargetId].Name));
         }
         if (inputData[InputType.Confirm] && _selectTargetId != DEFAULT_ID) {
-            context.targetCard = context.targets[_selectTargetId];
-            var action = CommandFactory.CreateAction(context);
+            ctx.targetCard = _targets[_selectTargetId];
             Debug.Log($"执行指令: {action.Type}");
-            ResetState(ref context);
-            return action;
         }
-        return _defaultAction;
     }
 
     int _selectZoneId = DEFAULT_ID;
-    Action SelectZone(InputData inputData, InteractionContext context) {
-        if (TryGetSelect(inputData, ref _selectZoneId, context.zoneIds.Count)) {
-            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, context.zoneIds[_selectZoneId]));
+    IReadOnlyList<int> _zoneIds = new List<int>();
+    void SelectZone(InputData inputData, IGameAction action, ActionContext ctx) {
+        if (TryGetSelect(inputData, ref _selectZoneId, _zoneIds.Count)) {
+            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, _zoneIds[_selectZoneId]));
         }
 
         if (inputData[InputType.Confirm] && _selectZoneId != DEFAULT_ID) {
-            context.toZoneId = context.zoneIds[_selectZoneId];
-            var action = CommandFactory.CreateAction(context);
+            ctx.toZoneId = _zoneIds[_selectZoneId];
             Debug.Log($"执行指令: {action.Type}");
-            ResetState(ref context);
-            return action;
         }
-        return _defaultAction;
     }
 
-    void ResetState(ref InteractionContext context) {
-        _curState = SelectState.None;
+    void ResetState(in ActionContext context) {
+        _curState = ActionStep.None;
         _selectCardId = DEFAULT_ID;
         _selectActionId = DEFAULT_ID;
         _selectTargetId = DEFAULT_ID;

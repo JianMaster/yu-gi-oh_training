@@ -17,7 +17,7 @@ public class GameController {
         Draw(_gameState.Opponent, GameDefines.START_CARD_COUNT);
     }
 
-    public void ExcuteCommand(Action action) {
+    public void ExcuteCommand(IGameAction action) {
         switch (action.Type) {
             case ActionType.NextPhase:
                 NextPhase();
@@ -75,6 +75,7 @@ public class GameController {
         var player = action.Executer;
         var card = action.SelectCard;
         var zoneId = action.SelectZoneId;
+        action.Execute();
         player.NormalSummon(card as Card_Monster, zoneId);
     }
 
