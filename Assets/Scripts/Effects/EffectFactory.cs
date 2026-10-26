@@ -1,7 +1,7 @@
 public static class EffectFactory {
-    public static IEffect CreateInstance(CardBase card, CardData data) {
+    public static IEffect CreateInstance(CardBase card) {
         IEffect effect;
-        effect = data.effectType switch {
+        effect = card.Data.effectType switch {
             EffectType.Healing => new Effect_Healing(),
             EffectType.Damage => new Effect_Damage(),
             _ => new Effect_None(),

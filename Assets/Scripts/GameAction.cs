@@ -37,7 +37,7 @@ public class Action_NormalSummon : IGameAction {
     }
 
     public void Execute(ActionContext ctx) {
-        throw new System.NotImplementedException();
+        ctx.player.NormalSummon(ctx.selectedCard as Card_Monster, ctx.toZoneId);
     }
 
 }

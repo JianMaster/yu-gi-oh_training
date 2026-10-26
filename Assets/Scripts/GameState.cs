@@ -10,9 +10,9 @@ public class GameState {
     public int Turn { get; private set; } = 1;
     public Player TurnOwner => (Turn + (_first ? 0 : 1)) % 2 == 1 ? _player1 : _player2;
     public Player Opponent => TurnOwner == _player1 ? _player2 : _player1;
+    public Player CurOperator { get; private set; }
+    public Player CurOpponent => GetOpponent(CurOperator);
 
-    public event Action<Phase> OnNextPhase;
-    public event Action<Player> OnNextTurn;
 
     public GameState(bool first, PlayerData data1, PlayerData data2) {
         CurPhase = Phase.Draw;
@@ -20,6 +20,7 @@ public class GameState {
         _first = first;
         _player1 = new(1, data1);
         _player2 = new(2, data2);
+        NewTurn();
         Debug.Log($"当前先手玩家：{(first ? 1 : 2)}");
     }
 
@@ -27,11 +28,21 @@ public class GameState {
         return player == _player1 ? _player2 : _player1;
     }
 
+    public void UpdateOperator() {
+        CurOperator = TurnOwner;
+    }
+    
+    public void NewTurn() {
+        UpdateOperator();
+        _player1.TurnStart();
+        _player2.TurnStart();
+    }
+
     public void NextPhase() {
         if (CurPhase == Phase.End) {
             Turn++;
             CurPhase = Phase.Draw;
-            OnNextTurn?.Invoke(TurnOwner);
+            NewTurn();
         }
         else {
             if (Turn == 1 && CurPhase == Phase.Main1) {
@@ -40,10 +51,9 @@ public class GameState {
             else {
                 CurPhase++;
             }
-            OnNextPhase?.Invoke(CurPhase);
         }
-
 
         Debug.Log($"当前回合{Turn}, 当前阶段{CurPhase}");
     }
+
 }

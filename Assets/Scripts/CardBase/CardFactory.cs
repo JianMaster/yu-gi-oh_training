@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public static class CardFactory {
     public static CardBase CreateInstance(string cardId, Player player) {
@@ -13,7 +14,8 @@ public static class CardFactory {
         else if (cardData.cardType == CardType.Trap) {
             card = new Card_Trap(cardData, player);
         }
-
+        Assert.IsNotNull(card);
+        card.InitEffect(EffectFactory.CreateInstance(card));
         return card;
     }
 }

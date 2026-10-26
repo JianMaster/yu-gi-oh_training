@@ -34,8 +34,6 @@ public class Player {
                 card.ChangeZone(ZoneType.Deck, _deck.Count - 1);
             }
         }
-
-        TurnStart();
     }
 
     public void MoveCard(CardBase card, ZoneType to, int toId = -1) {
