@@ -14,6 +14,6 @@ public class Effect_Healing : IEffect {
     }
 
     public void Resolve(EffectContext context) {
-        context.activater.Heal(context.value);
+        context.activater.ChangeHp(context.value);
     }
 }

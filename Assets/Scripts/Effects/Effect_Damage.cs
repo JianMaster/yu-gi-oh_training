@@ -11,6 +11,6 @@ public class Effect_Damage : IEffect {
         return true;
     }
     public void Resolve(EffectContext context) {
-        context.opponent.TakeDamage(context.value);
+        context.opponent.ChangeHp(context.value);
     }
 }

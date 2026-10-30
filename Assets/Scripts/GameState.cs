@@ -28,12 +28,12 @@ public class GameState {
         return player == _player1 ? _player2 : _player1;
     }
 
-    public void UpdateOperator() {
-        CurOperator = TurnOwner;
+    public void UpdateOperator(Player player) {
+        CurOperator = player;
     }
     
     public void NewTurn() {
-        UpdateOperator();
+        UpdateOperator(TurnOwner);
         _player1.TurnStart();
         _player2.TurnStart();
     }

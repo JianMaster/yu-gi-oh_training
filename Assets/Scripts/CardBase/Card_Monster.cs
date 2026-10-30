@@ -20,7 +20,7 @@ public class Card_Monster : CardBase {
         TurnStart();
     }
 
-    public void NormalSummon() {
+    public void OnNormalSummon() {
         Face = CardFace.FaceUp;
         Position = MonterPosition.Attack;
     }

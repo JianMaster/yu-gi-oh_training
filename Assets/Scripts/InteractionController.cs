@@ -7,7 +7,7 @@ public class InteractionController {
     GameState _state;
     ActionQuery _actionQuery;
     ActionStep _curStep;
-    IGameAction _action;
+    IPlayerAction _action;
     ActionContext _context;
 
     public InteractionController(GameState state, ActionQuery query) {
@@ -34,7 +34,7 @@ public class InteractionController {
         return false;
     }
 
-    public (IGameAction, ActionContext) GetAction(InputData inputData) {
+    public (IPlayerAction, ActionContext) GetAction(InputData inputData) {
         if (inputData[InputType.Cancel]) {
             ResetState();
             return (null, null);
@@ -74,14 +74,14 @@ public class InteractionController {
             _selectCardId = DEFAULT_ID;
             Debug.Log($"当前选择区域: {_curZone}");
         }
-        if (TryGetSelect(inputData, ref _selectCardId, player.GetZoneCards(_curZone).Count)) {
-            var list = player.GetZoneCards(_curZone);
+        if (TryGetSelect(inputData, ref _selectCardId, player.GetZone(_curZone).Count)) {
+            var list = player.GetZone(_curZone);
             Debug.Log($"当前玩家: {player.ID}, 当前选择区域: {_curZone}, 当前选择id: {_selectCardId}");
             Debug.Log(list[_selectCardId] == null ? "当前区域没有卡牌" : list[_selectCardId].ShowInfo());
         }
 
         if (inputData[InputType.Confirm]) {
-            var list = player.GetZoneCards(_curZone);
+            var list = player.GetZone(_curZone);
             if (_selectCardId == DEFAULT_ID || list[_selectCardId] == null) {
                 Debug.Log("当前无可操作卡");
                 return;
@@ -103,7 +103,7 @@ public class InteractionController {
     }
 
     int _selectActionId = DEFAULT_ID;
-    List<IGameAction> _actions = new();
+    List<IPlayerAction> _actions = new();
     void SelectAction(InputData inputData, ActionContext ctx) {
         if (TryGetSelect(inputData, ref _selectActionId, _actions.Count)) {
             // 选择指令
@@ -124,7 +124,7 @@ public class InteractionController {
 
     int _selectTargetId = DEFAULT_ID;
     IReadOnlyList<CardBase> _targets = new List<CardBase>();
-    void SelectTarget(InputData inputData, IGameAction action, ActionContext ctx) {
+    void SelectTarget(InputData inputData, IPlayerAction action, ActionContext ctx) {
         if (TryGetSelect(inputData, ref _selectTargetId, _targets.Count)) {
             Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, _targets[_selectTargetId].Name));
         }
@@ -136,7 +136,7 @@ public class InteractionController {
 
     int _selectZoneId = DEFAULT_ID;
     IReadOnlyList<int> _zoneIds = new List<int>();
-    void SelectZone(InputData inputData, IGameAction action, ActionContext ctx) {
+    void SelectZone(InputData inputData, IPlayerAction action, ActionContext ctx) {
         if (TryGetSelect(inputData, ref _selectZoneId, _zoneIds.Count)) {
             Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, _zoneIds[_selectZoneId]));
         }

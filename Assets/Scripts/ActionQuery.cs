@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class ActionQuery {
     GameRule _rule;
-    Dictionary<ActionType, IGameAction> _actionMap;
+    Dictionary<ActionType, IPlayerAction> _actionMap;
     public ActionQuery(GameRule rule) {
         _rule = rule;
         _actionMap = new() {
@@ -21,11 +21,11 @@ public class ActionQuery {
         };
     }
 
-    public List<IGameAction> GetAvailableAction(CardBase card, Player player, GameState state) {
+    public List<IPlayerAction> GetAvailableAction(CardBase card, Player player, GameState state) {
         var avalSet = GetAction(card);
-        List<IGameAction> list = new();
+        List<IPlayerAction> list = new();
         foreach (var type in avalSet) {
-            IGameAction action = _actionMap[type];
+            IPlayerAction action = _actionMap[type];
             bool rulePass = action.CanUse(card, player, state);
             bool effectPass = true;
             if (card.HasEffect) {

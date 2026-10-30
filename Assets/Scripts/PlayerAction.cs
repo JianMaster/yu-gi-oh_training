@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IGameAction {
+public interface IPlayerAction {
     ActionType Type { get; }
     bool CanUse(CardBase card, Player player, GameState state);
     ActionStep GetNextStep(ActionContext ctx);
@@ -10,7 +10,7 @@ public interface IGameAction {
     void Execute(ActionContext ctx);
 }
 
-public class Action_NormalSummon : IGameAction {
+public class Action_NormalSummon : IPlayerAction {
     public ActionType Type { get; } = ActionType.NormalSummon;
 
     public bool CanUse(CardBase card, Player player, GameState state) {
@@ -37,12 +37,18 @@ public class Action_NormalSummon : IGameAction {
     }
 
     public void Execute(ActionContext ctx) {
-        ctx.player.NormalSummon(ctx.selectedCard as Card_Monster, ctx.toZoneId);
+        var card = ctx.selectedCard as Card_Monster;
+        var player = ctx.player;
+        var toZoneId = ctx.toZoneId;
+        player.OnNormalSummon();
+        card.OnNormalSummon();
+        player.MoveCard(card, ZoneType.Monster, toZoneId);
+        Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.NormalSummon), player.ID, card.Name, toZoneId));
     }
 
 }
 
-public class Action_Attack : IGameAction {
+public class Action_Attack : IPlayerAction {
     public ActionType Type { get; } = ActionType.Attack;
     public Player Opponent { get; set; }
     public Card_Monster AttackMonster { get; set; }
@@ -53,7 +59,8 @@ public class Action_Attack : IGameAction {
         Phase phase = state.CurPhase;
         Card_Monster monster = card as Card_Monster;
         if (phase == Phase.Battle &&
-            card.ZoneType == ZoneType.Monster &&
+            monster.ZoneType == ZoneType.Monster &&
+            monster.Position == MonterPosition.Attack &&
             monster.AttackCount < GameDefines.TURN_ATTACK_COUNT) {
             return true;
         }
@@ -77,7 +84,7 @@ public class Action_Attack : IGameAction {
     }
 }
 
-public class Action_Activate : IGameAction {
+public class Action_Activate : IPlayerAction {
     public ActionType Type { get; } = ActionType.Activate;
     public CardBase SelectCard { get; set; }
     public int toZoneId { get; set; }

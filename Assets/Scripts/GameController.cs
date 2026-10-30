@@ -5,17 +5,18 @@ using UnityEngine.UI;
 
 public class GameController {
     GameState _gameState;
+    DuelAction _duelAction;
     public GameController(GameState state) {
         _gameState = state;
     }
 
     public void GameStart() {
         Debug.Log("游戏开始！");
-        Draw(_gameState.TurnOwner, GameDefines.START_CARD_COUNT);
-        Draw(_gameState.Opponent, GameDefines.START_CARD_COUNT);
+        _duelAction.Draw(_gameState.TurnOwner, GameDefines.START_CARD_COUNT);
+        _duelAction.Draw(_gameState.Opponent, GameDefines.START_CARD_COUNT);
     }
 
-    public void ExcuteCommand(IGameAction action, ActionContext ctx) {
+    public void ExcuteCommand(IPlayerAction action, ActionContext ctx) {
         if (ctx.nextPhase) {
             NextPhase();
             return;
@@ -58,9 +59,7 @@ public class GameController {
     //     }
     // }
 
-    void Draw(Player player, int count) {
-        player.Draw(count);
-    }
+    
 
     // void Attack(Action_Attack action) {
     //     var attacker = action.Executer;
@@ -141,20 +140,11 @@ public class GameController {
     //     EventSystem.Trigger(info);
     // }
 
-    void DestroyCard(Player player, CardBase card) {
-        if (player != card.Owner) {
-            Debug.LogError("卡牌不属于该玩家");
-            return;
-        }
-        player.MoveCard(card, ZoneType.GY);
-
-        Debug.Log(TextData.Instance.GetFormatText(Text_ID.Destroy, player.ID, card.Name));
-    }
 
     void NextPhase() {
         _gameState.NextPhase();
         if (_gameState.CurPhase == Phase.Draw && _gameState.Turn == 1) {
-            Draw(_gameState.TurnOwner, GameDefines.DRAW_CARD_COUNT);
+            _duelAction.Draw(_gameState.TurnOwner, GameDefines.DRAW_CARD_COUNT);
         }
     }
 }

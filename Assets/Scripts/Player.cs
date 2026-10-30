@@ -79,30 +79,12 @@ public class Player {
 
     public void TurnEnd() { }
 
-    public void TakeDamage(int damage) {
-        LifePoint -= damage;
-        Log($"承受伤害：{damage}, 生命值剩余{LifePoint}");
+    public void ChangeHp(int damage) {
+        LifePoint += damage;
+        Log($"生命变化：{damage}, 生命值剩余{LifePoint}");
         if (LifePoint <= 0) {
             Log($"游戏结束");
         }
-    }
-
-    public void Heal(int heal) {
-        LifePoint += heal;
-        Log($"恢复伤害：{heal}, 生命值剩余{LifePoint}");
-    }
-
-    public void Draw(int count) {
-        for (int i = 0; i < count; ++i) {
-            if (_deck.Count == 0) {
-                Debug.LogError("No Deck!!");
-                break;
-            }
-
-            Debug.Log(TextData.Instance.GetFormatText(Text_ID.DrawInfo, _deck[^1].ShowInfo()));
-            MoveCard(_deck[^1], ZoneType.Hand);
-        }
-        Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.Draw), ID, count, _hand.Count));
     }
 
     public void CheckHandLimit() {
@@ -111,7 +93,7 @@ public class Player {
         }
     }
 
-    public IReadOnlyList<CardBase> GetZoneCards(ZoneType zoneType) {
+    public IReadOnlyList<CardBase> GetZone(ZoneType zoneType) {
         return _zone[zoneType];
     }
 
@@ -126,11 +108,8 @@ public class Player {
         return zoneIds;
     }
 
-    public void NormalSummon(Card_Monster card, int targetZoneId) {
-        Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.NormalSummon), ID, card.Name, targetZoneId));
+    public void OnNormalSummon() {
         NormalSummonCount++;
-        MoveCard(card, ZoneType.Monster, targetZoneId);
-        card.NormalSummon();
     }
 
     public List<CardBase> GetAttackTarget() {

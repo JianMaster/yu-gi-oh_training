@@ -26,7 +26,7 @@ public class Main : MonoBehaviour {
     void Update() {
         _inputManager.GetInput(ref _inputData);
 
-        (IGameAction action, ActionContext ctx) = _interaction.GetAction(_inputData);
+        (IPlayerAction action, ActionContext ctx) = _interaction.GetAction(_inputData);
         _game.ExcuteCommand(action, ctx);
 
     }
