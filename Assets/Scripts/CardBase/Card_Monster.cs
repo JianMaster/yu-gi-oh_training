@@ -34,10 +34,12 @@ public class Card_Monster : CardBase {
         Position = Position == MonterPosition.Attack ? MonterPosition.Defense : MonterPosition.Attack;
     }
 
-    public void BeforeAttack() { }
+    public void BeforeAttack(bool isAttacker) { }
 
-    public void AfterAttack() {
-        AttackCount++;
+    public void AfterAttack(bool isAttacker) {
+        if (isAttacker) {
+            AttackCount++;
+        }
     }
 
     public override void TurnStart() {

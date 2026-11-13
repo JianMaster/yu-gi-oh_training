@@ -130,6 +130,10 @@ public class InteractionController {
         }
         if (inputData[InputType.Confirm] && _selectTargetId != DEFAULT_ID) {
             ctx.targetCard = _targets[_selectTargetId];
+            if (ctx.targetCard.ZoneId == GameDefines.PLAYER_ZONE) {
+                ctx.isDirectAttack = true; 
+            }
+            _curStep = ActionStep.Execute;
             Debug.Log($"执行指令: {action.Type}");
         }
     }
@@ -143,6 +147,7 @@ public class InteractionController {
 
         if (inputData[InputType.Confirm] && _selectZoneId != DEFAULT_ID) {
             ctx.toZoneId = _zoneIds[_selectZoneId];
+            _curStep = ActionStep.Execute;
             Debug.Log($"执行指令: {action.Type}");
         }
     }

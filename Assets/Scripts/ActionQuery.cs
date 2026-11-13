@@ -7,7 +7,7 @@ public class ActionQuery {
         _rule = rule;
         _actionMap = new() {
             { ActionType.NormalSummon, new Action_NormalSummon() },
-            // { ActionType.Attack, new Action_Attack() },
+            { ActionType.Attack, new Action_Attack() },
             // { ActionType.Activate, new Action_Activate() },
         };
     }

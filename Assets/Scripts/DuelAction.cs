@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DuelAction {
@@ -23,11 +24,21 @@ public class DuelAction {
         Debug.Log(TextData.Instance.GetFormatText(Text_ID.Destroy, player.ID, card.Name));
     }
 
-    public void Damage(Player player, int value) {
-        
+    public void Damage(Player player, int value, ActionContext ctx) {
+        player.ChangeHp(-value);
+        bool attackSuccess = ctx.damageTarget == ctx.opponent;
+        var info = new DamageEvent() {
+            type = DamageType.Battle,
+            source = ctx.damageSource,
+            target = ctx.damageTarget,
+            sourceCard = attackSuccess ? ctx.selectedCard : ctx.targetCard,
+            damage = ctx.damage
+        };
+        EventSystem.Trigger(info);
     }
 
     public void Heal(Player player, int value) {
-        
+        player.ChangeHp(value);
     }
+
 }
