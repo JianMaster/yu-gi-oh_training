@@ -8,6 +8,7 @@ public class ActionContext {
     public int toZoneId = 0;
     public CardBase targetCard = null;
 
+    // バトルに関するcontext
     public bool isDirectAttack;
     public DamageType damageType = DamageType.Battle;
     public int damage = 0;

@@ -14,8 +14,7 @@ public class Main : MonoBehaviour {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
         _state = new(player1_first, data1, data2);
-        GameRule rule = new();
-        ActionQuery query  = new(rule);
+        ActionQuery query  = new();
         _interaction = new(_state, query);
         _game = new(_state);
 

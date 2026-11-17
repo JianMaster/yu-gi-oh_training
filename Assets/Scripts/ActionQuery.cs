@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 
 public class ActionQuery {
-    GameRule _rule;
     Dictionary<ActionType, IPlayerAction> _actionMap;
-    public ActionQuery(GameRule rule) {
-        _rule = rule;
+    public ActionQuery() {
         _actionMap = new() {
             { ActionType.NormalSummon, new Action_NormalSummon() },
             { ActionType.Attack, new Action_Attack() },

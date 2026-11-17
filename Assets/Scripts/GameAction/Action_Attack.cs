@@ -2,53 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IPlayerAction {
-    ActionType Type { get; }
-    bool CanUse(CardBase card, Player player, GameState state);
-    ActionStep GetNextStep(ActionContext ctx);
-    IReadOnlyList<int> GetZoneOptions(ActionContext ctx);
-    IReadOnlyList<CardBase> GetTargetOptions(ActionContext ctx);
-    void Execute(ActionContext ctx, DuelAction duelAction);
-}
-
-public class Action_NormalSummon : IPlayerAction {
-    public ActionType Type { get; } = ActionType.NormalSummon;
-
-    public bool CanUse(CardBase card, Player player, GameState state) {
-        Phase phase = state.CurPhase;
-        if (card.ZoneType == ZoneType.Hand &&
-            phase == Phase.Main1 &&
-            player.NormalSummonCount < GameDefines.SUMMON_NORMAL_COUNT) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public ActionStep GetNextStep(ActionContext ctx) {
-        return ActionStep.Zone;
-    }
-
-    public IReadOnlyList<CardBase> GetTargetOptions(ActionContext ctx) {
-        return new List<CardBase>();
-    }
-
-    public IReadOnlyList<int> GetZoneOptions(ActionContext ctx) {
-        return ctx.player.GetAvailableZone(ZoneType.Monster);
-    }
-
-    public void Execute(ActionContext ctx, DuelAction duelAction) {
-        var card = ctx.selectedCard as Card_Monster;
-        var player = ctx.player;
-        var toZoneId = ctx.toZoneId;
-        player.OnNormalSummon();
-        card.OnNormalSummon();
-        player.MoveCard(card, ZoneType.Monster, toZoneId);
-        Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.NormalSummon), player.ID, card.Name, toZoneId));
-    }
-
-}
-
 public class Action_Attack : IPlayerAction {
     public ActionType Type { get; } = ActionType.Attack;
 
@@ -142,37 +95,5 @@ public class Action_Attack : IPlayerAction {
 
     public ActionStep GetNextStep(ActionContext ctx) {
         return ActionStep.Target;
-    }
-}
-
-public class Action_Activate : IPlayerAction {
-    public ActionType Type { get; } = ActionType.Activate;
-    public CardBase SelectCard { get; set; }
-    public int toZoneId { get; set; }
-    public ZoneType toZone { get; set; }
-
-    public bool CanUse(CardBase card, Player player, GameState state) {
-        Phase phase = state.CurPhase;
-        bool pass = phase == Phase.Main1 && card.HasEffect;
-        if (card is Card_Trap trap) {
-            pass = pass && !trap.SetAndDown;
-        }
-        return pass;
-    }
-
-    public void Execute(ActionContext ctx, DuelAction duelAction) {
-        throw new System.NotImplementedException();
-    }
-
-    public IReadOnlyList<CardBase> GetTargetOptions(ActionContext ctx) {
-        return new List<CardBase>();
-    }
-
-    public IReadOnlyList<int> GetZoneOptions(ActionContext ctx) {
-        return new List<int>();
-    }
-
-    public ActionStep GetNextStep(ActionContext ctx) {
-        return ActionStep.Execute;
     }
 }
