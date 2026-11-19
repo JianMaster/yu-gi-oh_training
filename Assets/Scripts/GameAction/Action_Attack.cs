@@ -9,7 +9,7 @@ public class Action_Attack : IPlayerAction {
         Phase phase = state.CurPhase;
         Card_Monster monster = card as Card_Monster;
         if (phase == Phase.Battle &&
-            monster.ZoneType == ZoneType.Monster &&
+            monster.Zone.type == ZoneType.Monster &&
             monster.Position == MonterPosition.Attack &&
             monster.AttackCount < GameDefines.TURN_ATTACK_COUNT) {
             return true;
@@ -89,8 +89,8 @@ public class Action_Attack : IPlayerAction {
         return ctx.opponent.GetAttackTarget();
     }
 
-    public IReadOnlyList<int> GetZoneOptions(ActionContext ctx) {
-        return new List<int>();
+    public IReadOnlyList<Zone> GetZoneOptions(ActionContext ctx) {
+        return new List<Zone>();
     }
 
     public ActionStep GetNextStep(ActionContext ctx) {

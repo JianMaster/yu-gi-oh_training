@@ -5,7 +5,7 @@ public class ActionContext {
     public Player player;
     public Player opponent;
     public CardBase selectedCard = null;
-    public int toZoneId = 0;
+    public Zone toZone;
     public CardBase targetCard = null;
 
     // バトルに関するcontext
@@ -22,7 +22,7 @@ public class ActionContext {
 
     public void Reset() {
         selectedCard = null;
-        toZoneId = 0;
+        toZone = Zone.Default;
         targetCard = null;
         isDirectAttack = false;
     }

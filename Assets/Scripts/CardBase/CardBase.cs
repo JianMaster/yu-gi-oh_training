@@ -1,12 +1,22 @@
 using System.Collections.Generic;
+public struct Zone {
+    public static Zone Default = new() { type = ZoneType.None, slot = -1 };
+    public ZoneType type;
+    public int slot;
+    public bool IsValid() {
+        return type == ZoneType.None;
+    }
+    public bool IsSlotDefalut() {
+        return slot == -1;
+    }
+}
 
 public abstract class CardBase {
     protected CardData _data;
     protected IEffect _effect;
 
     public Player Owner { get; protected set; }
-    public ZoneType ZoneType { get; protected set; }
-    public int ZoneId { get; protected set; }
+    public Zone Zone { get; protected set; }
     public CardFace Face { get; protected set; }
     public bool SetTurn { get; protected set; }
     public bool SetAndDown => SetTurn && Face == CardFace.FaceDown;
@@ -33,9 +43,11 @@ public abstract class CardBase {
         _effect = effect;
     }
 
-    public void ChangeZone(ZoneType zoneType, int zoneId) {
-        ZoneType = zoneType;
-        ZoneId = zoneId;
+    public void ChangeZone(ZoneType type, int slot) {
+        Zone = new Zone() {
+            type = type,
+            slot = slot
+        };
     }
 
     public abstract void Set();

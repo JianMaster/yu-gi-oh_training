@@ -37,8 +37,8 @@ public class Player {
     }
 
     public void MoveCard(CardBase card, ZoneType to, int toId = -1) {
-        ZoneType from = card.ZoneType;
-        int fromId = card.ZoneId;
+        ZoneType from = card.Zone.type;
+        int fromId = card.Zone.slot;
         List<CardBase> fromZone = _zone[from];
         List<CardBase> toZone = _zone[to];
         bool fromField = from == ZoneType.Monster || from == ZoneType.SpellTrap;
@@ -97,15 +97,19 @@ public class Player {
         return _zone[zoneType];
     }
 
-    public List<int> GetAvailableZone(ZoneType zoneType) {
-        List<int> zoneIds = new();
+    public List<Zone> GetAvailableZone(ZoneType zoneType) {
+        List<Zone> zones = new();
         for (int i = 0; i < _zone[zoneType].Count; ++i) {
             if (_zone[zoneType][i] == null) {
-                zoneIds.Add(i);
+                zones.Add(new() {
+                    type = zoneType,
+                    slot = i
+                });
             }
         }
-        Log($"当前可用区域：" + string.Join(" ", zoneIds));
-        return zoneIds;
+
+        Log($"当前可用区域：" + string.Join(" ", zones));
+        return zones;
     }
 
     public void OnNormalSummon() {

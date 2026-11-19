@@ -7,7 +7,7 @@ public class Action_NormalSummon : IPlayerAction {
 
     public bool CanUse(CardBase card, Player player, GameState state) {
         Phase phase = state.CurPhase;
-        if (card.ZoneType == ZoneType.Hand &&
+        if (card.Zone.type == ZoneType.Hand &&
             phase == Phase.Main1 &&
             player.NormalSummonCount < GameDefines.SUMMON_NORMAL_COUNT) {
             return true;
@@ -24,18 +24,18 @@ public class Action_NormalSummon : IPlayerAction {
         return new List<CardBase>();
     }
 
-    public IReadOnlyList<int> GetZoneOptions(ActionContext ctx) {
+    public IReadOnlyList<Zone> GetZoneOptions(ActionContext ctx) {
         return ctx.player.GetAvailableZone(ZoneType.Monster);
     }
 
     public void Execute(ActionContext ctx, DuelAction duelAction) {
         var card = ctx.selectedCard as Card_Monster;
         var player = ctx.player;
-        var toZoneId = ctx.toZoneId;
+        var toZone = ctx.toZone;
         player.OnNormalSummon();
         card.OnNormalSummon();
-        player.MoveCard(card, ZoneType.Monster, toZoneId);
-        Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.NormalSummon), player.ID, card.Name, toZoneId));
+        player.MoveCard(card, ZoneType.Monster, toZone.slot);
+        Debug.Log(string.Format(TextData.Instance.GetText(Text_ID.NormalSummon), player.ID, card.Name, toZone.slot));
     }
 
 }

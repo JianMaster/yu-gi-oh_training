@@ -114,7 +114,7 @@ public class InteractionController {
             _action = _actions[_selectActionId];
             _curStep = _action.GetNextStep(ctx);
             if (_curStep == ActionStep.Zone) {
-                _zoneIds = _action.GetZoneOptions(ctx);
+                _zones = _action.GetZoneOptions(ctx);
             }
             else if (_curStep == ActionStep.Target) {
                 _targets = _action.GetTargetOptions(ctx);
@@ -130,7 +130,7 @@ public class InteractionController {
         }
         if (inputData[InputType.Confirm] && _selectTargetId != DEFAULT_ID) {
             ctx.targetCard = _targets[_selectTargetId];
-            if (ctx.targetCard.ZoneId == GameDefines.PLAYER_ZONE) {
+            if (ctx.targetCard.Zone.slot == GameDefines.PLAYER_ZONE) {
                 ctx.isDirectAttack = true; 
             }
             _curStep = ActionStep.Execute;
@@ -139,14 +139,14 @@ public class InteractionController {
     }
 
     int _selectZoneId = DEFAULT_ID;
-    IReadOnlyList<int> _zoneIds = new List<int>();
+    IReadOnlyList<Zone> _zones = new List<Zone>();
     void SelectZone(InputData inputData, IPlayerAction action, ActionContext ctx) {
-        if (TryGetSelect(inputData, ref _selectZoneId, _zoneIds.Count)) {
-            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, _zoneIds[_selectZoneId]));
+        if (TryGetSelect(inputData, ref _selectZoneId, _zones.Count)) {
+            Debug.Log(TextData.Instance.GetFormatText(Text_ID.SelectCommand_1, _zones[_selectZoneId]));
         }
 
         if (inputData[InputType.Confirm] && _selectZoneId != DEFAULT_ID) {
-            ctx.toZoneId = _zoneIds[_selectZoneId];
+            ctx.toZone = _zones[_selectZoneId];
             _curStep = ActionStep.Execute;
             Debug.Log($"执行指令: {action.Type}");
         }

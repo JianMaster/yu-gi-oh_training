@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Action_Activate : IPlayerAction {
     public ActionType Type { get; } = ActionType.Activate;
-    public CardBase SelectCard { get; set; }
-    public int toZoneId { get; set; }
-    public ZoneType toZone { get; set; }
 
     public bool CanUse(CardBase card, Player player, GameState state) {
         Phase phase = state.CurPhase;
@@ -25,8 +22,8 @@ public class Action_Activate : IPlayerAction {
         return new List<CardBase>();
     }
 
-    public IReadOnlyList<int> GetZoneOptions(ActionContext ctx) {
-        return new List<int>();
+    public IReadOnlyList<Zone> GetZoneOptions(ActionContext ctx) {
+        return new List<Zone>();
     }
 
     public ActionStep GetNextStep(ActionContext ctx) {

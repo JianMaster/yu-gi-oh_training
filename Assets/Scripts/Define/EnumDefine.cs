@@ -10,6 +10,7 @@ public enum CardFace {
 }
 
 public enum ZoneType {
+    None,
     Deck,
     Hand,
     SpellTrap,
