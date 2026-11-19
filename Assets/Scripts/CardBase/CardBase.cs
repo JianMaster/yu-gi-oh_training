@@ -1,13 +1,32 @@
+using System;
 using System.Collections.Generic;
-public struct Zone {
-    public static Zone Default = new() { type = ZoneType.None, slot = -1 };
+public struct Zone : IEquatable<Zone> {
+    public static readonly Zone Default = new() { type = ZoneType.None, slot = -1 };
     public ZoneType type;
     public int slot;
-    public bool IsValid() {
-        return type == ZoneType.None;
+
+    public bool Equals(Zone other) {
+        return type == other.type && slot == other.slot;
     }
-    public bool IsSlotDefalut() {
-        return slot == -1;
+
+    public override bool Equals(object obj) {
+        return obj is Zone && Equals(obj);
+    }
+
+    public override int GetHashCode() {
+        return HashCode.Combine(type, slot);
+    }
+
+    public static bool operator ==(Zone a, Zone b) {
+        return a.Equals(b);
+    }
+
+    public static bool operator !=(Zone a, Zone b) {
+        return !a.Equals(b);
+    }
+
+    public bool IsValid() {
+        return type != ZoneType.None;
     }
 }
 
